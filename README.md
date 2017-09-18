@@ -29,8 +29,6 @@
 <br>
 <strong>Configuration</strong><br>
 <br>
-<img title="GridConfigSec1.PNG" src="https://github.com/mehrgithub/dcrmeg/raw/master/docs/Home_GridConfigSec1.PNG"><br>
-<br>
 <img title="GridConfigSec2.PNG" src="https://github.com/mehrgithub/dcrmeg/raw/master/docs/Home_GridConfigSec2.PNG"><br>
 <br>
 <strong>Translation</strong><br>
