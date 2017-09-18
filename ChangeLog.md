@@ -19,8 +19,11 @@ HTML5 button default behavior. When button has focus, pressing enter or spacebar
 Additions:
 
 1- Text field with URL format: CTRL+Click to open the link like in Outlook
+
 2- Grid API - DCrmEgGrid.GridRowData to retrieve a row data using record guid
+
 3- Grid API - DCrmEgGrid.TotalRecordCount to retrieve total record count. This is not the total records displayed.
+
 4- Replacement for the following native product related editable grids. The grid's (+) create new menu will display "Write-in Product" and "Existing Products" items.
 
 Entity to place the grid on			Entity to retreive data from
