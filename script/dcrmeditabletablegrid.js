@@ -1,30 +1,25 @@
 ﻿
 String.prototype.capitalizeFirstLetter = function () {
-        return (this.length > 0) ? this.charAt(0).toUpperCase() + this.slice(1) : '';
-    };
-
+    return (this.length > 0) ? this.charAt(0).toUpperCase() + this.slice(1) : '';
+};
 String.prototype.contains = function (str, exactMatch) {
-        exactMatch = exactMatch || false;
-        return (!exactMatch) ? (this.indexOf(str) != -1) : (this.toLowerCase().indexOf(str.toLowerCase()) != -1);
-    };
-
+    exactMatch = exactMatch || false;
+    return (!exactMatch) ? (this.indexOf(str) != -1) : (this.toLowerCase().indexOf(str.toLowerCase()) != -1);
+};
 String.prototype.startsWith = function (str) {
-        return this.slice(0, str.length) == str;
-    };
-
+    return this.slice(0, str.length) == str;
+};
 String.prototype.endsWith = function (str) {
-        return this.slice(-str.length) == str;
-    };
-
+    return this.slice(-str.length) == str;
+};
 Array.prototype.ExactMatchExists = function (str) {
-        for (var i = 0; i < this.length; i++) {
-            if (str == this[i]) {
-                return true;
-            }
+    for (var i = 0; i < this.length; i++) {
+        if (str == this[i]) {
+            return true;
         }
-        return false;
-    };
-
+    }
+    return false;
+};
 Array.prototype.MatchExists = function (str) {
     for (var i = 0; i < this.length; i++) {
         if (str == this[i]) {
@@ -33,15 +28,12 @@ Array.prototype.MatchExists = function (str) {
     }
     return -1;
 };
-
 Array.prototype.insert = function (index, item) {
     this.splice(index, 0, item);
 };
-
 Array.prototype.DeleteItem = function (index) {
     this.splice(index, 1);
 };
-
 /*
 Sample calls
 axis.isArray([]); // true
@@ -79,7 +71,6 @@ axis.isUndefined(); // true
     }
     return exports;
 });
-
 (function ($) {
     $.extend(true, window, {
         "DCrmEditableGrid": {
@@ -244,7 +235,6 @@ axis.isUndefined(); // true
             }
         }
     });
-
     $.extend(true, window, {
         "DCrmEditableGrid": {
             "Editors": {
@@ -267,7 +257,6 @@ axis.isUndefined(); // true
             }
         }
     });
-
     $.extend(true, window, {
         "DCrmEditableGrid": {
             "Keys": {
@@ -290,7 +279,6 @@ axis.isUndefined(); // true
             }
         }
     });
-
     $.extend(true, window, {
         "DCrmEditableGrid": {
             "Helper": {
@@ -986,6 +974,7 @@ $.fn.DCrmEditableGrid.TextBox = function (table, editorsArrayi, requiredErrorCon
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -1386,7 +1375,7 @@ $.fn.DCrmEditableGrid.TextBox = function (table, editorsArrayi, requiredErrorCon
                             var index = $editor.PossibleMove[0].cellIndex;
                             // td -> tr -> tbody -> table
                             var t = $editor.PossibleMove.parent().parent().parent();
-                            var headers = t.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+                            var headers = t.find('thead:first').find('tr:first').find('th');
                             if ((headers) && (headers.length)) {
                                 var th = $(headers[index]);
                                 var aa = th.attr('data-crmfieldtype');
@@ -1458,6 +1447,7 @@ $.fn.DCrmEditableGrid.DatePicker = function (table, editorsArrayi, requiredError
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -1612,6 +1602,7 @@ $.fn.DCrmEditableGrid.CheckBox = function (table, editorsArrayi, gridcustomident
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -1652,7 +1643,7 @@ $.fn.DCrmEditableGrid.CheckBox = function (table, editorsArrayi, gridcustomident
                             var index = $editor.PossibleMove[0].cellIndex;
                             // td -> tr -> tbody -> table
                             var t = $editor.PossibleMove.parent().parent().parent();
-                            var headers = t.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+                            var headers = t.find('thead:first').find('tr:first').find('th');
                             if ((headers) && (headers.length)) {
                                 var th = $(headers[index]);
                                 var aa = th.attr('data-crmfieldtype');
@@ -2019,6 +2010,7 @@ $.fn.DCrmEditableGrid.EntityStatesBox = function (schemaName, editorsArrayi, tab
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -2329,6 +2321,7 @@ $.fn.DCrmEditableGrid.Description = function (table, editorsArrayi, requiredErro
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -2503,6 +2496,7 @@ $.fn.DCrmEditableGrid.OptionSet = function (table, editorsArrayi, requiredErrorC
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -2634,7 +2628,7 @@ $.fn.DCrmEditableGrid.OptionSet = function (table, editorsArrayi, requiredErrorC
                         var index = $editor.PossibleMove[0].cellIndex;
                         // td -> tr -> tbody -> table
                         var t = $editor.PossibleMove.parent().parent().parent();
-                        var headers = t.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+                        var headers = t.find('thead:first').find('tr:first').find('th');
                         if ((headers) && (headers.length)) {
                             var th = $(headers[index]);
                             var aa = th.attr('data-crmfieldtype');
@@ -2934,6 +2928,7 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
     var CrmFieldInfo = {
         FieldSchemaName: editorsArrayi.FieldSchemaName,
         FieldLabel: editorsArrayi.FieldLabel,
+        CustomFieldLable: editorsArrayi.CustomFieldLable,
         ParentEntitySchemaName: editorsArrayi.ParentEntitySchemaname,
         ParentEntityLabel: editorsArrayi.ParentEntityName,
         GridCustomIdentifier: gridcustomidentifier
@@ -2947,7 +2942,11 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
         LookupTargetEntity: "account,contact"
         DefaultView: 576dfa60-6456-e511-80c0-080027c01cb9
         DefaultViewFetchXml: null
-        DefaultViewObjectTypeCode: "112"
+        DefaultViewObjectTypeCode: "112",
+
+        DefaultViewFetchConditions = '',
+        DefaultViewFetchLinks = '',
+        $editor.LookupData.DefaultViewEntityName = 'account'
 
         TargetEntities:
         [
@@ -3002,10 +3001,98 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
         return { left: $editor.position().left, top: ($editor.position().top + $editor.height()) };
     }
 
+    function GetDefaultViewFetchConditions(addfiltertag, entityname) {
+        if (($editor.LookupData.DefaultViewFetchXml) &&
+            ($editor.LookupData.DefaultViewFetchConditions) &&
+            ($editor.LookupData.DefaultViewFetchConditions.length > 0) &&
+            ($editor.LookupData.DefaultViewEntityName == entityname)) {
+            if(addfiltertag) {
+                return '<filter type="and">' + $editor.LookupData.DefaultViewFetchConditions + '</filter>';
+            }
+            return $editor.LookupData.DefaultViewFetchConditions;
+        }
+        return '';
+    }
+    function GetDefaultViewFetchLinks(entityname) {
+        if (($editor.LookupData.DefaultViewFetchXml) &&
+            ($editor.LookupData.DefaultViewFetchLinks) &&
+            ($editor.LookupData.DefaultViewFetchLinks.length > 0) &&
+            ($editor.LookupData.DefaultViewEntityName == entityname)) {
+            return $editor.LookupData.DefaultViewFetchLinks;
+        }
+        return '';
+    }
+    function DefaultViewFetchCallback(result) {
+        if ((result) && (result.length) && (result.length > 0)) {
+            $editor.LookupData.DefaultViewFetchXml = (_thisGlobals.UseWebApi) ? result[0]['fetchxml'] : result[0].attributes['fetchxml'].value;
+            $editor.LookupData.DefaultViewFetchConditions = '';
+            $editor.LookupData.DefaultViewFetchLinks = '';
+
+            var xmlDoc, $xml;
+            try {
+                xmlDoc = $.parseXML($editor.LookupData.DefaultViewFetchXml);
+            }
+            catch (e) {
+                LogEx("Unable to parse default view xml.\r\n" + e.message);
+                return;
+            }
+
+            try {
+                $xml = $(xmlDoc);
+                var entitytag = $xml.find('entity');
+
+                if ((entitytag) && (entitytag.length)) {
+                    $editor.LookupData.DefaultViewEntityName = $(entitytag[0]).attr('name');
+                }
+
+                $($xml).find("filter").each(function () {
+                    var marker = $(this);
+                    if (marker.parent()[0].tagName == 'entity') {
+                        $editor.LookupData.DefaultViewFetchConditions += marker[0].innerHTML;
+                    }
+                });
+
+                $($xml).find("link-entity").each(function () {
+                    var marker = $(this);
+                    if (marker.parent()[0].tagName == 'entity') {
+                        $editor.LookupData.DefaultViewFetchLinks += marker[0].outerHTML;
+                    }
+                });
+            } catch (ee) {
+                LogEx("Unable to get conditions. [" + ee.message + "]");
+            }
+
+            //console.log('$editor.LookupData.DefaultViewFetchXml\r\n' + $editor.LookupData.DefaultViewFetchXml +
+            //    '\r\n$editor.LookupData.DefaultViewFetchConditions\r\n' + $editor.LookupData.DefaultViewFetchConditions +
+            //    '\r\n$editor.LookupData.DefaultViewFetchLinks\r\n' + $editor.LookupData.DefaultViewFetchLinks +
+            //    '\r\n$editor.LookupData.DefaultViewEntityName' + $editor.LookupData.DefaultViewEntityName);
+        }
+    }
+
     function InitializaLookupData() {
         LookupDataInitialized = true;
         for (var i = 0; i < $editor.LookupData.TargetEntities.length; i++) {
             var helper = new LookupDataHelper($editor.LookupData.TargetEntities[i]);
+        }
+
+        if ($editor.LookupData.DefaultView) {
+            var saveViewFetch =
+                '<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">' +
+                    '<entity name="savedquery">' +
+                    '<attribute name="name" />' +
+                    '<attribute name="savedqueryid" />' +
+                    '<attribute name="fetchxml" />' +
+                    '<order attribute="name" descending="false" />' +
+                    '<filter>' +
+                        '<condition attribute="savedqueryid" operator="eq" value="{' + $editor.LookupData.DefaultView + '}" />' +
+                    '</filter>' +
+                    '</entity>' +
+                '</fetch>';
+            if (_thisGlobals.UseWebApi) {
+                SdkWebAPI.getFetchXml('savedqueries', saveViewFetch, DefaultViewFetchCallback, null);
+            } else {
+                XrmServiceToolkit.Soap.Fetch(saveViewFetch, true, DefaultViewFetchCallback, null);
+            }
         }
     }
 
@@ -3057,7 +3144,8 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
             '<attribute name="' + $editor.LookupData.TargetEntities[i].PrimaryIdAttribute + '" />' +
             '<attribute name="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" />' +
             '<order attribute="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" descending="false" />' +
-            aconditions + alinks +
+            aconditions + GetDefaultViewFetchConditions(true, $editor.LookupData.TargetEntities[i].Target) +
+            alinks + GetDefaultViewFetchLinks($editor.LookupData.TargetEntities[i].Target) +
             '</entity>' +
         '</fetch>';
 
@@ -3099,9 +3187,9 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
             '<order attribute="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" descending="false" />' +
             '<filter type="and">' +
                '<condition attribute="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" operator="like" value="%' + searchfor + '%" />' +
-               aconditions +
+               aconditions + GetDefaultViewFetchConditions(false, $editor.LookupData.TargetEntities[i].Target) +
             '</filter>' +
-            alinks +
+            alinks + GetDefaultViewFetchLinks($editor.LookupData.TargetEntities[i].Target) +
           '</entity>' +
         '</fetch>';
         var result = null;
@@ -3141,9 +3229,9 @@ $.fn.DCrmEditableGrid.Lookup = function (table, editorsArrayi, requiredErrorCont
             '<order attribute="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" descending="false" />' +
             '<filter type="and">' +
                '<condition attribute="' + $editor.LookupData.TargetEntities[i].PrimaryNameAttribute + '" operator="eq" value="' + searchfor + '" />' +
-               aconditions +
+               aconditions + GetDefaultViewFetchConditions(false, $editor.LookupData.TargetEntities[i].Target) +
             '</filter>' +
-            alinks +
+            alinks + GetDefaultViewFetchLinks($editor.LookupData.TargetEntities[i].Target) +
           '</entity>' +
         '</fetch>';
 
@@ -4488,18 +4576,18 @@ var CrmEditableGrid = (function () {
         };
 
         // Setup Toolbar buttons event handlers
-        $('#' + self.activeOptions.GridContainerIds.RefreshGrid).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.RefreshGrid).on('click', function (e) {
             e.stopPropagation();
             self.RefreshGridRows(true);
         });
-        $('#' + self.activeOptions.GridContainerIds.ClearAllFilters).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.ClearAllFilters).on('click', function (e) {
             e.stopPropagation();
             self.activeOptions.GridFetchHelper.ClearInlineFilters();
             var filterHeaders = self.GetHeaderCells();
             filterHeaders.find('span.recfilterset').removeClass('recfilterset').addClass('recfilternotset');
             self.RefreshGridRows();
         });
-        $('#' + self.activeOptions.GridContainerIds.AutoSave).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.AutoSave).on('click', function (e) {
             e.stopPropagation();
             self.activeOptions.AutoSaveChanges = $(this).is(':checked');
             if (self.activeOptions.AutoSaveChanges) {
@@ -4512,7 +4600,7 @@ var CrmEditableGrid = (function () {
                 $('#' + self.activeOptions.GridContainerIds.SaveChanges).show();
             }
         });
-        $('#' + self.activeOptions.GridContainerIds.UndoChanges).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.UndoChanges).on('click', function (e) {
 
             if ($(this).hasClass('GreyImage')) {
                 LogIt("Undo is disabled");
@@ -4575,7 +4663,7 @@ var CrmEditableGrid = (function () {
                 }
             }
         }).addClass('GreyImage');
-        $('#' + self.activeOptions.GridContainerIds.CancelAllChanges).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.CancelAllChanges).on('click', function (e) {
 
             if ($(this).hasClass('GreyImage')) {
                 LogIt("Undo all is disabled");
@@ -4609,7 +4697,7 @@ var CrmEditableGrid = (function () {
             self.SaveUndoCancelEnable(false);
 
         }).addClass('GreyImage');
-        $('#' + self.activeOptions.GridContainerIds.SaveChanges).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.SaveChanges).on('click', function (e) {
             e.stopPropagation();
 
             if (($(this).hasClass('GreyImage')) && (!self.activeOptions.AutoSaveChanges)) {
@@ -4620,7 +4708,7 @@ var CrmEditableGrid = (function () {
             self.SaveGridChanges(true);
 
         }).addClass('GreyImage');
-        $('#' + self.activeOptions.GridContainerIds.ExportToExcel).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.ExportToExcel).on('click', function (e) {
             e.stopPropagation();
 
             if (self.activeOptions.TotalRecordsCount == 0) {
@@ -4695,13 +4783,13 @@ var CrmEditableGrid = (function () {
                     return false;
                 });
         });
-        $('#' + self.activeOptions.GridContainerIds.AddNewRec).click(function (e) {
+        $('#' + self.activeOptions.GridContainerIds.AddNewRec).on('click', function (e) {
             e.stopPropagation();
             var msg = undefined;
             // 10 inline, 20 new window, 30 show menu
             if (self.GridConfiguration.MSProductGrid) {
                 // Dispaly a different menu
-                if (self.GridConfiguration.MSProductGridHelperc && self.GridConfiguration.MSProductGridHelperc.GetPriceList()) {
+                if (self.GridConfiguration.MSProductGridHelperc) { // && self.GridConfiguration.MSProductGridHelperc.GetPriceList()) {
                     var $bg = $('<div></div>')
                       .addClass('InvisibleFrame')
                       .appendTo('body')
@@ -4714,26 +4802,31 @@ var CrmEditableGrid = (function () {
                     var menu = $('<ul class="contextMenuPlugin"><div class="gutterLine"></div></ul>').appendTo('body');
                     $('<li><a href="#" class="contextMenuLink" id="getexistingproducts"><span class="itemTitle">Existing Products</span></a></li>').appendTo(menu);
                     $('<li><a href="#" class="contextMenuLink" id="newinlineproduct"><span class="itemTitle">Write-in Product</span></a></li>').appendTo(menu);
-                    // From won opportunities or all or use a specific view??
-                    $('<li><a href="#" class="contextMenuLink" id="getproductsfromopportunity"><span class="itemTitle">Get Products</span></a></li>').appendTo(menu);
+                    //$('<li><a href="#" class="contextMenuLink" id="getproductsfromopportunity"><span class="itemTitle">Get Products</span></a></li>').appendTo(menu);
                     menu.find('a').click(function (e) {
                         var id = $(this).attr('id');
-                        var msg = undefined;
-
                         if (id == 'getexistingproducts') {
-                            self.GridConfiguration.MSProductGridHelperc.DisplayExistingProducts();
+                            if (self.GridConfiguration.MSProductGridHelperc.GetPriceList()) {
+                                self.GridConfiguration.MSProductGridHelperc.DisplayExistingProducts(self.activeOptions.GridContainerIds.Table);
+                            } else {
+                                self.GridConfiguration.MSProductGridHelperc.DisplayNativePricelistSelect('getexistingproducts',
+                                    self.activeOptions.GridContainerIds.Table);
+                            }
                         } else if (id == 'newinlineproduct') {
-                            // need a new dialog
-                        } else if (id == 'getproductsfromopportunity') {
-                            // need a new dialog
+                            if (self.GridConfiguration.MSProductGridHelperc.GetPriceList()) {
+                                self.GridConfiguration.MSProductGridHelperc.AddWriteInProduct(self.activeOptions.GridContainerIds.Table);
+                            } else {
+                                self.GridConfiguration.MSProductGridHelperc.DisplayNativePricelistSelect('newinlineproduct',
+                                    self.activeOptions.GridContainerIds.Table);
+                            }
                         }
+                        //else if (id == 'getproductsfromopportunity') {
+                        //    // need a new dialog to display products
+                        //}
 
                         $bg.remove();
                         menu.remove();
                         e.stopPropagation();
-                        if (msg) {
-                            DisplayCrmAlertDialog("Unable to proceed due to exception:\r" + msg);
-                        }
                         return false;
                     });
 
@@ -4746,9 +4839,10 @@ var CrmEditableGrid = (function () {
                             return false;
                         });
 
-                } else {
-                    self.GridConfiguration.MSProductGridHelperc.DisplayNativePricelistSelect();
                 }
+                //else {
+                //    self.GridConfiguration.MSProductGridHelperc.DisplayNativePricelistSelect();
+                //}
             } else if (self.activeOptions.NewBtnBehavoir == "30") {
                 DisplayNewButtonMenu(self, $(this));
             } else if (self.activeOptions.NewBtnBehavoir == "20") {
@@ -4955,6 +5049,14 @@ var CrmEditableGrid = (function () {
             }
         });
 
+        $('#' + self.activeOptions.GridContainerIds.GridToolbar).find('button').on('keydown', function (e) {
+            var tkey = e.which || e.keycode;
+            if (tkey == 32) {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            }
+        });
         self.SetGridReadonly = function (readonly) {
             self.activeOptions.ParentFormIsReadOnly = readonly;
             var tbody = self.mainTable.find('tbody:first');
@@ -5028,6 +5130,15 @@ var CrmEditableGrid = (function () {
                     if (self.activeCell[0].cellIndex > 0) {
                         self.mainTable.focus();
                         self.activeCell.focus();
+
+                        // TODO Test
+                        // text with URL format -> click+ctrl (similar to outlook)
+                        if ((e.ctrlKey) && (self.activeCell.attr(_thisGlobals.DataAttr.Cell.Format) == 'url')) {
+                            window.open(_thisHelpers.GetActiveCellText(self.activeCell), '_blank');
+                            e.preventDefault();
+                            return false;
+                        }
+
                         if (self.activeCell.hasClass('IsDirty')) {
                             $('#' + self.activeOptions.GridContainerIds.UndoChanges).removeClass('GreyImage');
                         } else {
@@ -5208,6 +5319,7 @@ list of translated languages
                                         var CrmFieldInfo = {
                                             FieldSchemaName: self.activeOptions.columneditors[index - 1].FieldSchemaName,
                                             FieldLabel: self.activeOptions.columneditors[index - 1].FieldLabel,
+                                            CustomFieldLable: self.activeOptions.columneditors[index - 1].CustomFieldLable,
                                             ParentEntitySchemaName: self.activeOptions.columneditors[index - 1].ParentEntitySchemaname,
                                             ParentEntityLabel: self.activeOptions.columneditors[index - 1].ParentEntityName,
                                             GridCustomIdentifier: self.activeOptions.GridCustomIdentifier
@@ -5372,7 +5484,7 @@ list of translated languages
             return self.mainTable.find(_thisGlobals.DefaultGridOptions.selectorBodyRows);
         };
         self.GetHeaderCells = function () {
-            return self.mainTable.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+            return self.mainTable.find('thead:first').find('tr:first').find('th');
         };
         self.GridThead = self.mainTable.find('thead');
         self.GridTbody = self.mainTable.find('tbody');
@@ -6734,6 +6846,19 @@ list of translated languages
 
         // table body scroll handling
         self.GridTbody.on('scroll', function (e) { //detect a scroll event on the tbody
+
+            //console.log('self.GridTbody.outerHeight() ' + self.GridTbody.outerHeight() + ' self.GridTbody[0].scrollTop ' + self.GridTbody[0].scrollTop + 
+            //    ' self.GridTbody[0].scrollHeight ' + self.GridTbody[0].scrollHeight);
+            //if (self.GridTbody.outerHeight() < self.GridTbody[0].scrollHeight) {
+            //    var e0 = e.originalEvent,
+            //        delta = e0.wheelDelta || -e0.detail;
+            //    if ((self.GridTbody.outerHeight() + self.GridTbody[0].scrollTop) > self.GridTbody[0].scrollHeight) {
+            //        e.preventDefault();
+            //        this.scrollTop += (delta < 0 ? 1 : -1);
+            //        return false;
+            //    }
+            //}
+
             /*
             Setting the thead left value to the negative value of tbody.scrollLeft will make it track the movement
             of the tbody element. Setting an elements left value to that of the tbody.scrollLeft left makes it maintain
@@ -6902,7 +7027,6 @@ list of translated languages
                 } else if (field.InternalEditorType == DCrmEditableGrid.Editors.DatePicker) {
                     if (field.ValueToSave.length > 0) {
                         val = (_thisGlobals.UseWebApi) ? _thisHelpers.encodeDate(Date.parseDate(field.ValueToSave)) : Date.parseDate(field.ValueToSave);
-                        //console.log('field.ValueToSave ' + field.ValueToSave + ' val ' + val, Date.parseDate(field.ValueToSave));
                     }
                 } else if (field.InternalEditorType == DCrmEditableGrid.Editors.Checkbox) {
                     val = (_thisGlobals.UseWebApi) ? field.CheckAttribute : { value: field.CheckAttribute, type: "boolean" };
@@ -7089,7 +7213,6 @@ list of translated languages
             }
         };
 
-        // Callbacks
         self.UpdateCrmFieldSucessCallback = function (result, toSave, refreshGrid) {
             _thisHelpers.WaitDialog();
 
@@ -7210,7 +7333,6 @@ list of translated languages
             }
         };
 
-        // Initialize any aggregates
         if ((self.activeOptions.AggregateFields.length > 0) && (self.GridTfoot != null)) {
             self.ApplyInitialAggregates();
         }
@@ -7530,15 +7652,6 @@ var colResizable = (function () {
         * @param {jQuery ref} t - table object	
         */
         self.applyBounds = function (t) {
-            //var w = $.map(t.c, function (c) {			//obtain real widths
-            //    return self.GetElemWidth(c); // c.width();
-            //});
-            ////t.removeClass(self.FLEX);	//prevent table width changes
-            //t.width(t.w = t.width()).removeClass(self.FLEX);
-            //$.each(t.c, function (i, c) {
-            //    self.SetElemWidth(c, w[i]);
-            //    c.w = w[i];				//set column widths applying bounds (table's max-width)
-            //});
             if (self.options.GridTitleWordWrap) {
                 var thead = t.find('thead tr:first').find('th:first');
                 var thheight = thead.height();
@@ -7555,7 +7668,6 @@ var colResizable = (function () {
                     }
                 }
             }
-            //t.addClass(self.FLEX);						//allow table width changes
         };
 
 
@@ -7716,7 +7828,6 @@ function DisplayNewButtonMenu(self, $this) {
 
         } else if (id == 'newwindow') {
             try {
-
                 if (window.parent.DCrmEgGridBeforeCreateNewRecord) {
                     var allow = window.parent.DCrmEgGridBeforeCreateNewRecord(null, self.activeOptions.ParentEntityInfo);
                     if (!allow) {
@@ -7777,7 +7888,7 @@ You can’t set the values for partylist or regarding lookups.
             }
             try {
                 var callback = function (obj) {
-                    console.log("Created new " + obj.savedEntityReference.entityType + " named '" + obj.savedEntityReference.name + "' with id:" + obj.savedEntityReference.id);
+                    LogIt("Created new " + obj.savedEntityReference.entityType + " named '" + obj.savedEntityReference.name + "' with id:" + obj.savedEntityReference.id);
                 }
                 if (self.activeOptions.ParentChildLookupInfo.Related) {
                     var param = {
@@ -7785,11 +7896,11 @@ You can’t set the values for partylist or regarding lookups.
                         id: self.activeOptions.ParentChildLookupInfo.Guid
                     };
                     window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, param, null).then(callback, function (error) {
-                        console.log(error.message);
+                        LogEx(error.message);
                     });
                 } else {
                     window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, null).then(callback, function (error) {
-                        console.log(error.message);
+                        LogEx(error.message);
                     });
                 }
             } catch (e) {
@@ -7837,7 +7948,7 @@ function CloneRecord(self, rowToBeCloned, lastone) {
             lastcloneRefresh = true;
         }
         self.contextMenuTarget = undefined;
-        var $theadcells = self.mainTable.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+        var $theadcells = self.mainTable.find('thead:first').find('tr:first').find('th');
         var cells = $cloneRow[0].cells;
         var $cell = undefined;
         var val = undefined;
@@ -8018,7 +8129,12 @@ function CloneRecord(self, rowToBeCloned, lastone) {
                             // parentcustomerid_account or parentcustomerid_contact
                             if ((ln) && (gu)) {
                                 if (_thisGlobals.UseWebApi) {
-                                    var navProp = self.GridEditors[i].LookupData.AssociatedNavigationProperty;
+                                    var navProp = null;
+                                    // TODO Test
+                                    // Issue when cloning records with readonly Lookup fields
+                                    if (self.GridEditors[i]) {
+                                        navProp = self.GridEditors[i].LookupData.AssociatedNavigationProperty;
+                                    }
 
                                     if (axis.isUndefined(navProp) || axis.isNull(navProp)) {
                                         navProp = SdkWebAPI.GetAttributeSchemaName(recSchema, schema);
@@ -8040,8 +8156,7 @@ function CloneRecord(self, rowToBeCloned, lastone) {
                             }
                         }
                     }
-                } // End if
-
+                }
             }
         }
 
@@ -8061,6 +8176,11 @@ function CloneRecord(self, rowToBeCloned, lastone) {
             newRecGuid = XrmServiceToolkit.Soap.Create(recNew);
         }
 
+        if (!_thisHelpers.IsValidGuid(newRecGuid)) {
+            DisplayCrmAlertDialog('Unable to clone record due to errors.');
+            return;
+        }
+
         $cloneRow.attr(_thisGlobals.DataAttr.Cell.RecordGuid, newRecGuid)
             .attr(_thisGlobals.DataAttr.Row.SubGrid.ChildGridOpen, _thisGlobals.DataAttr.NO);
 
@@ -8071,7 +8191,6 @@ function CloneRecord(self, rowToBeCloned, lastone) {
         }
 
         $tobeCloned.after($cloneRow);
-
         var tableRows = self.GetBodyRows();
         for (var i = 0; i < tableRows.length; i++) {
             $(tableRows[i]).attr(_thisGlobals.DataAttr.Row.InternalIndex, i);
@@ -8128,7 +8247,7 @@ function CreateInlineRecord(self, excelCells, lastRec) {
     } catch (e) {}
 
     try {
-        var $theadcells = self.mainTable.find(_thisGlobals.DefaultGridOptions.selectorHeaders);
+        var $theadcells = self.mainTable.find('thead:first').find('tr:first').find('th');
         var $cloneRow = $('<tr' + extraRowHeight + '></tr>');
         var cells = undefined;
         var $cell = undefined;
@@ -8903,7 +9022,8 @@ function GetSelectedFields(d) {
                 DefaultValue: ((items.length >= 13 && items[12].length > 0) ? items[12] : null),
                 DefaultView: ((items.length >= 14 && items[13].length > 0) ? items[13] : null),
                 DefaultViewObjectTypeCode: ((items.length >= 15 && items[14].length > 0) ? items[14] : null),
-                AggregateOp: ((items.length >= 16 && items[15].length > 0) ? items[15] : null)
+                AggregateOp: ((items.length >= 16 && items[15].length > 0) ? items[15] : null),
+                CustomName: ((items.length >= 17 && items[16].length > 0) ? items[16] : null)
             });
         });
     }
@@ -10156,96 +10276,6 @@ var _saveAs = (function (view) {
     return saveAs;
 }(window));
 
-//var _title = function (config) {
-//    var title = config.title;
-//    return title.indexOf('*') !== -1 ?
-//		title.replace('*', $('title').text()) :
-//		title;
-//};
-//var _filename = function (config, incExtension) {
-//    // Backwards compatibility
-//    var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined ?
-//		config.title :
-//		config.filename;
-//    if (filename.indexOf('*') !== -1) {
-//        filename = filename.replace('*', $('title').text());
-//    }
-//    // Strip characters which the OS will object to
-//    filename = filename.replace(/[^a-zA-Z0-9_\u00A1-\uFFFF\.,\-_ !\(\)]/g, "");
-//    return incExtension === undefined || incExtension === true ?
-//		filename + config.extension :
-//		filename;
-//};
-//var _newLine = function (config) {
-//    return config.newline ?
-//		config.newline :
-//		navigator.userAgent.match(/Windows/) ?
-//			'\r\n' :
-//			'\n';
-//};
-//var _exportData = function (dt, config) {
-//    var newLine = _newLine(config);
-//    var data = dt;
-//    var boundary = config.fieldBoundary;
-//    var separator = config.fieldSeparator;
-//    var reBoundary = new RegExp(boundary, 'g');
-//    var escapeChar = config.escapeChar !== undefined ?
-//		config.escapeChar :
-//		'\\';
-//    var join = function (a) {
-//        var s = '';
-//        // If there is a field boundary, then we might need to escape it in
-//        // the source data
-//        for (var i = 0, ien = a.length ; i < ien ; i++) {
-//            if (i > 0) {
-//                s += separator;
-//            }
-//            s += boundary ?
-//				boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-//				a[i];
-//        }
-//        return s;
-//    };
-//    var header = config.header ? join(data.header) + newLine : '';
-//    var footer = config.footer ? newLine + join(data.footer) : '';
-//    var body = [];
-//    for (var i = 0, ien = data.body.length ; i < ien ; i++) {
-//        body.push(join(data.body[i]));
-//    }
-//    return {
-//        str: header + body.join(newLine) + footer,
-//        rows: body.length
-//    };
-//};
-//var addRow = function (row, isHeader) {
-//    var cells = [];
-//    var tmpVal = '';
-//    for (var i = 1, ien = row.length ; i < ien ; i++) {
-//        if (row[i] === null || row[i] === undefined) {
-//            tmpVal = '';
-//        } else {
-//            tmpVal = (isHeader) ? _thisHelpers.GetHeaderCellText($(row[i])) : _thisHelpers.GetActiveCellText($(row[i]));
-//        }
-//        if (tmpVal.length > 0) {
-//            // trim and strip new line
-//            tmpVal = tmpVal.replace( /^\s+|\s+$/g, '' ).replace(/\n/g, ' ');
-//        }
-//        // Don't match numbers with leading zeros or a negative anywhere
-//        // but the start
-//        cells.push(typeof tmpVal === 'number' || (tmpVal.match && tmpVal.match(/^-?[0-9\.]+$/) && tmpVal.charAt(0) !== '0') ?
-//            '<c t="n"><v>' + tmpVal + '</v></c>' :
-//            '<c t="inlineStr"><is><t>' + (
-//                !tmpVal.replace ?
-//                tmpVal :
-//                tmpVal
-//                    .replace(/&(?!amp;)/g, '&amp;')
-//                    .replace(/[\x00-\x1F\x7F-\x9F]/g, '')) + // remove control characters
-//            '</t></is></c>'                                    // they are not valid in XML
-//        );
-//    }
-//    return '<row>' + cells.join('') + '</row>';
-//};
-
 var SaveAsGridCallbackHelper = (function () {
 
     function SaveAsGridCallbackHelper(who, saveas) {
@@ -10759,51 +10789,106 @@ var SaveAsGridCallbackHelper = (function () {
 /* Grid Configuration class, loading, ... */
 
 var MSProductGridHelper = (function () {
-    function MSProductGridHelper(schemaname) {
+    function MSProductGridHelper(gridinfo) {
         var self = this;
 
         self.PriceList = { name: null, id: null, entityType: null };
-        // 1083, 1091, 1085. 1089
-        // ['opportunityproduct', 'invoicedetail', 'quotedetail', 'salesorderdetail']
-
-        self.SchemaName = schemaname;
-
-        self.SimulateNativeProductsGrid = function () {
-            return (['opportunity', 'quote', 'salesorder', 'invoice'].MatchExists(_thisGlobals.ParentFormEntityName) != -1) ? true : false;
+        /*
+        {
+            ParentEntityName: self.Entity.Label,
+            ParentEntitySchemaName: self.Entity.SchemaName,
+            GridCustomIdentifier: self.GridCustomIdentifier,
+            ConfigID: self.ConfigID
         }
+         */
+        self.DGridInfo = gridinfo;
+        self.CurTableid = null;
+        self.CurAction = null;
 
-        self.MSProductCallbackErrorHandler = function (errorMsg) {
-            console.error("Exception " + errorMsg);
+        self.RefreshDGrid = function (targettableid) {
+            if (targettableid) {
+                self.CurTableid = targettableid;
+            }
+            var dgrid = FindGridConfigByGridID(self.DGridInfo.ConfigID);
+            if (dgrid) {
+                var t = dgrid.FindGrid(self.CurTableid);
+                if (t) {
+                    t.RefreshGridRows(true);
+                }
+            }
         };
 
-        self.GetProductsForPriceListCallback = function (result) {
+        self.FireBeforeCreateJSCallback = function (recNew) {
+            var allow = true;
+            if (window.parent.DCrmEgGridBeforeCreateNewRecord) {
+                allow = window.parent.DCrmEgGridBeforeCreateNewRecord(recNew, self.DGridInfo);
+            }
+            return allow;
+        };
+        self.FireAfterCreateJSCallback = function (newRecGuid) {
+            if (window.parent.DCrmEgGridCreateNewRecord) {
+                var callbackData = { NewRecordGuid: newRecGuid, GridCustomIdentifier: self.DGridInfo.GridCustomIdentifier };
+                window.parent.DCrmEgGridCreateNewRecord(callbackData, self.DGridInfo);
+            }
+        };
+        self.SimulateNativeProductsGrid = function () {
+            return (['opportunity', 'quote', 'salesorder', 'invoice'].MatchExists(_thisGlobals.ParentFormEntityName) != -1) ? true : false;
+        };
+        self.EnableImportProductsMenu = function () {
+            return (['quote', 'salesorder', 'invoice'].MatchExists(_thisGlobals.ParentFormEntityName) != -1) ? true : false;
+        };
+        self.MSProductCallbackErrorHandler = function (error) {
+            if (_thisGlobals.UseWebApi) {
+                LogEx(error.message);
+            } else {
+                LogEx(error);
+            }
+        };
+
+        self.GetProductsForPriceListCallback = function (result, hasMoreRecords, pagingCookie, targettableid) {
             if ((result) && (result.length) && (result.length > 0)) {
 
                 var prodtable = $('#products_table');
                 var tablebody = prodtable.find('tbody:first');
                 tablebody.empty();
 
-                var tr, td, prodStruct, itemIcon = undefined;
+                var tr, prodStruct, itemIcon, prod, prodlabel, prodid, unitgroupid, unitgrouplabel, unitid, unitlabel = null;
 
-                // Name productnumber defaultuomscheduleid defaultuomid     productid
                 for (var i = 0; i < result.length; i++) {
-                    prodStruct = result[i].attributes['productstructure'].value + '';
+                    if (_thisGlobals.UseWebApi) {
+                        prod = result[i];
+                        prodStruct = prod['productstructure'] + '';
+                        prodlabel = prod['name'];
+                        prodid = prod['productid'];
+                        unitgrouplabel = prod['_defaultuomscheduleid_value@OData.Community.Display.V1.FormattedValue'];
+                        unitgroupid = prod['_defaultuomscheduleid_value'];
+                        unitlabel = prod['_defaultuomid_value@OData.Community.Display.V1.FormattedValue'];
+                        unitid = prod['_defaultuomid_value'];
+                    } else {
+                        prod = result[i].attributes;
+                        prodStruct = prod['productstructure'].value + '';
+                        prodlabel = prod['name'].value;
+                        prodid = prod['productid'].value;
+                        unitgrouplabel = prod['defaultuomscheduleid'].name;
+                        unitgroupid = prod['defaultuomscheduleid'].id;
+                        unitlabel = prod['defaultuomid'].name;
+                        unitid = prod['defaultuomid'].id;
+                    }
+
                     itemIcon = 'dcrmeg_product';
                     if (prodStruct == '3') {
                         itemIcon = 'dcrmeg_productbundle';
                     }
                     tr = $('<tr></tr>').appendTo(tablebody);
-                    $('<td><input type="checkbox" data-product-id="' + result[i].attributes['productid'].value
+                    $('<td><input type="checkbox" data-targettableid="' + targettableid
+                        + '" data-product-id="' + prodid
+                        + '" data-product-name="' + prodlabel
+                        + '" data-defaultuomscheduleid="' + unitgroupid
+                        + '" data-defaultuomid="' + unitid
                         + '" data-product-structure="' + prodStruct + '" /></td>').appendTo(tr);
-                    $('<td><img src="' + itemIcon + '" /><span>' + result[i].attributes['name'].value + '</span></td>')
-                        .attr(_thisGlobals.ToolTipAttrName, result[i].attributes['name'].value)
-                        .appendTo(tr);
-                    $('<td>' + result[i].attributes['defaultuomid'].name + '</td>')
-                        .attr(_thisGlobals.ToolTipAttrName, result[i].attributes['defaultuomid'].name)
-                        .appendTo(tr);
-                    $('<td>' + result[i].attributes['defaultuomscheduleid'].name + '</td>')
-                        .attr(_thisGlobals.ToolTipAttrName, result[i].attributes['defaultuomscheduleid'].name)
-                        .appendTo(tr);
+                    $('<td><img src="' + itemIcon + '" /><span>' + prodlabel + '</span></td>').attr(_thisGlobals.ToolTipAttrName, prodlabel).appendTo(tr);
+                    $('<td>' + unitlabel + '</td>').attr(_thisGlobals.ToolTipAttrName, unitlabel).appendTo(tr);
+                    $('<td>' + unitgrouplabel + '</td>').attr(_thisGlobals.ToolTipAttrName, unitgrouplabel).appendTo(tr);
                 }
                 $('#products_flyoutOverlay').show('slow');
             } else {
@@ -10811,8 +10896,10 @@ var MSProductGridHelper = (function () {
             }
         };
 
-        self.DisplayExistingProducts = function () {
-            GetProductsForPriceList(self.PriceList.id, self.GetProductsForPriceListCallback, self.MSProductCallbackErrorHandler);
+        self.DisplayExistingProducts = function (tableid) {
+            self.CurTableid = tableid;
+            self.DisplayNativeProductSelect();
+            //GetProductsForPriceList(self.PriceList.id, self.GetProductsForPriceListCallback, self.MSProductCallbackErrorHandler, tableid);
         };
 
         self.GetPriceList = function () {
@@ -10823,8 +10910,6 @@ var MSProductGridHelper = (function () {
                     self.PriceList.id = t[0].id;
                     return true;
                 }
-            } else {
-                // ask use for a pricelist
             }
             return false;
         };
@@ -10838,23 +10923,358 @@ var MSProductGridHelper = (function () {
                     object[0].id = result.items[0].id;
                     object[0].name = result.items[0].name;
                     object[0].entityType = result.items[0].typename;
+
                     if (self.SimulateNativeProductsGrid()) {
                         _thisGlobals.xrmPage.getAttribute('pricelevelid').setValue(object);
                         _thisGlobals.xrmPage.data.setFormDirty(true);
                     }
+
+                    if (self.CurAction) {
+                        if (self.CurAction == 'newinlineproduct') {
+                            setTimeout(function () {
+                                self.AddWriteInProduct(self.CurTableid);
+                            }, 100);
+                        } else if (self.CurAction == 'getexistingproducts') {
+                            setTimeout(function () {
+                                self.DisplayExistingProducts(self.CurTableid);
+                            }, 100);
+                        }
+                        self.CurAction = null;
+                    }
                 } catch (e) {
-                    LogEx('Unable to set the price list.\r\n' + e.message, pl);
+                    LogEx('Unable to set the price list.\r\n' + e.message);
                 }
             }
         };
 
-        self.DisplayNativePricelistSelect = function () {
+        self.DisplayNativePricelistSelect = function (action, tableid) {
+            self.CurAction = action;
+            self.CurTableid = tableid;
+
             var url = "/_controls/lookup/lookupsingle.aspx?objecttypes=1022";
             DisplayNativeDialog(url, self.DisplayNativePricelistSelectCallback);
         };
 
-        self.Initialize = function () {
+        self.ProductRelatedMetadata = [
+            {
+                LogicalName: 'product',
+                SchemaName: 'Product',
+                PrimaryIdAttribute: 'productid',
+                PrimaryNameAttribute: 'name',
+                LogicalCollectionName: 'products',
+                ObjectTypeCode: 1024,
+                DisplayName: 'Product'
+            },
+            {
+                LogicalName: 'opportunityproduct',
+                SchemaName: 'OpportunityProduct',
+                PrimaryIdAttribute: 'opportunityproductid',
+                PrimaryNameAttribute: 'productidname',
+                LogicalCollectionName: 'opportunityproducts',
+                ObjectTypeCode: 1083,
+                DisplayName: 'Opportunity Product',
+                Parent: {
+                    LogicalName: 'opportunity',
+                    SchemaName: 'Opportunity',
+                    PrimaryIdAttribute: 'opportunityid',
+                    PrimaryNameAttribute: 'name',
+                    LogicalCollectionName: 'opportunities',
+                    ObjectTypeCode: 3,
+                    DisplayName: 'Opportunity'
+                }
+            },
+            {
+                LogicalName: 'invoicedetail',
+                SchemaName: 'InvoiceDetail',
+                PrimaryIdAttribute: 'invoicedetailid',
+                PrimaryNameAttribute: 'productidname',
+                LogicalCollectionName: 'invoicedetails',
+                ObjectTypeCode: 1091,
+                DisplayName: 'Invoice Product',
+                Parent: {
+                    LogicalName: 'invoice',
+                    SchemaName: 'Invoice',
+                    PrimaryIdAttribute: 'invoiceid',
+                    PrimaryNameAttribute: 'name',
+                    LogicalCollectionName: 'invoices',
+                    ObjectTypeCode: 1090,
+                    DisplayName: 'Invoice'
+                }
+            },
+            {
+                LogicalName: 'quotedetail',
+                SchemaName: 'QuoteDetail',
+                PrimaryIdAttribute: 'quotedetailid',
+                PrimaryNameAttribute: 'productidname',
+                LogicalCollectionName: 'quotedetails',
+                ObjectTypeCode: 1085,
+                DisplayName: 'Quote Product',
+                Parent: {
+                    LogicalName: 'quote',
+                    SchemaName: 'Quote',
+                    PrimaryIdAttribute: 'quoteid',
+                    PrimaryNameAttribute: 'name',
+                    LogicalCollectionName: 'quotes',
+                    ObjectTypeCode: 1084,
+                    DisplayName: 'Quote'
+                }
+            },
+            {
+                LogicalName: 'salesorderdetail',
+                SchemaName: 'SalesOrderDetail',
+                PrimaryIdAttribute: 'salesorderdetailid',
+                PrimaryNameAttribute: 'productidname',
+                LogicalCollectionName: 'salesorderdetails',
+                ObjectTypeCode: 1089,
+                DisplayName: 'Order Products',
+                Parent: {
+                    LogicalName: 'salesorder',
+                    SchemaName: 'SalesOrder',
+                    PrimaryIdAttribute: 'salesorderid',
+                    PrimaryNameAttribute: 'name',
+                    LogicalCollectionName: 'salesorders',
+                    ObjectTypeCode: 1088,
+                    DisplayName: 'Order'
+                }
+            }
+        ];
+        self.FindDetail = function (logicalname) {
+            for (var i = 0; i < self.ProductRelatedMetadata.length; i++) {
+                if (self.ProductRelatedMetadata[i].LogicalName == logicalname) {
+                    return self.ProductRelatedMetadata[i];
+                }
+            }
+            return null;
+        };
 
+        /*
+            {
+                LogicalName: 'opportunityproduct',
+                SchemaName: 'OpportunityProduct',
+                PrimaryIdAttribute: 'opportunityproductid',
+                PrimaryNameAttribute: 'productidname',
+                LogicalCollectionName: 'opportunityproducts',
+                ObjectTypeCode: 1083,
+                DisplayName: 'Opportunity Product',
+                Parent: {
+                    LogicalName: 'opportunity',
+                    SchemaName: 'Opportunity',
+                    PrimaryIdAttribute: 'opportunityid',
+                    PrimaryNameAttribute: 'name',
+                    LogicalCollectionName: 'opportunities',
+                    ObjectTypeCode: 3,
+                    DisplayName: 'Opportunity'
+                }
+            }
+         */
+        self.CurDetail = self.FindDetail(self.DGridInfo.ParentEntitySchemaName);
+
+        self.AddWriteInProduct = function (targettableid) {
+            var recNew = null;
+            var newRecGuid = null;
+            var allow = true;
+            if (_thisGlobals.UseWebApi) {
+                recNew = {};
+                recNew['productdescription'] = 'Write-In Product';
+                recNew[self.CurDetail.Parent.PrimaryIdAttribute + '@odata.bind'] = '/'
+                    + self.CurDetail.Parent.LogicalCollectionName
+                    + '(' + _thisGlobals.ParentFormEntityId.replace(/[{}]/g, '') + ')';
+                recNew['quantity'] = 0;
+                recNew['priceperunit'] = 0;
+                recNew['manualdiscountamount'] = 0;
+                recNew['isproductoverridden'] = true;
+
+                allow = self.FireBeforeCreateJSCallback(recNew);
+                if (allow) {
+                    newRecGuid = SdkWebAPI.create(self.CurDetail.LogicalCollectionName, recNew, true);
+                }
+            } else {
+                recNew = new XrmServiceToolkit.Soap.BusinessEntity(self.CurDetail.LogicalName);
+                recNew.attributes['productdescription'] = 'Write-In Product';
+                recNew.attributes[self.CurDetail.Parent.PrimaryIdAttribute] = {
+                    id: _thisGlobals.ParentFormEntityId,
+                    logicalName: self.CurDetail.Parent.LogicalName,
+                    type: "EntityReference"
+                };
+                recNew.attributes['quantity'] = { value: 0, type: "decimal" };
+                recNew.attributes['manualdiscountamount'] = { value: 0, type: "Money" };
+                recNew.attributes['priceperunit'] = { value: 0, type: "Money" };
+                recNew.attributes['isproductoverridden'] = { value: true, type: "boolean" };
+
+                allow = self.FireBeforeCreateJSCallback(recNew);
+                if (allow) {
+                    newRecGuid = XrmServiceToolkit.Soap.Create(recNew);
+                }
+            }
+            if (!_thisHelpers.IsValidGuid(newRecGuid)) {
+                DisplayCrmAlertDialog('Unable to create write-in product due to errors.');
+            }
+
+            self.FireAfterCreateJSCallback(newRecGuid);
+            self.RefreshDGrid(targettableid);
+        };
+
+        self.AddExistingProducts = function (selected) {
+            for (var i = 0; i < selected.length; i++) {
+                var recNew = null;
+                var newRecGuid = null;
+                //var chk = $(selected[i]);
+                var productid = selected[i].productid; // chk.attr('data-product-id');
+                var defaultuomid = selected[i].defaultuomid; // chk.attr('data-defaultuomid');
+                var allow = true;
+
+                if (_thisGlobals.UseWebApi) {
+                    recNew = {};
+                    recNew[self.CurDetail.Parent.PrimaryIdAttribute + '@odata.bind'] = '/'
+                        + self.CurDetail.Parent.LogicalCollectionName
+                        + '(' + _thisGlobals.ParentFormEntityId.replace(/[{}]/g, '') + ')';
+                    recNew['productid@odata.bind'] = '/products(' + productid.replace(/[{}]/g, '') + ')';
+                    recNew['uomid@odata.bind'] = '/uoms(' + defaultuomid.replace(/[{}]/g, '') + ')';
+                    recNew['quantity'] = 1;
+                    recNew['manualdiscountamount'] = 0;
+                    recNew['isproductoverridden'] = false;
+                    allow = self.FireBeforeCreateJSCallback(recNew);
+                    if (allow) {
+                        newRecGuid = SdkWebAPI.create(self.CurDetail.LogicalCollectionName, recNew, true);
+                    }
+                } else {
+                    recNew = new XrmServiceToolkit.Soap.BusinessEntity(self.CurDetail.LogicalName);
+                    recNew.attributes[self.CurDetail.Parent.PrimaryIdAttribute] = {
+                        id: _thisGlobals.ParentFormEntityId,
+                        logicalName: self.CurDetail.Parent.LogicalName,
+                        type: "EntityReference"
+                    };
+                    recNew.attributes['productid'] = {
+                        id: productid,
+                        logicalName: 'product',
+                        type: "EntityReference"
+                    };
+                    recNew.attributes['uomid'] = {
+                        id: defaultuomid,
+                        logicalName: 'uom',
+                        type: "EntityReference"
+                    };
+                    recNew.attributes['quantity'] = { value: 1, type: "decimal" };
+                    recNew.attributes['manualdiscountamount'] = { value: 0, type: "Money" };
+                    recNew.attributes['isproductoverridden'] = { value: false, type: "boolean" };
+                    allow = self.FireBeforeCreateJSCallback(recNew);
+                    if (allow) {
+                        newRecGuid = XrmServiceToolkit.Soap.Create(recNew);
+                    }
+                }
+                if (!_thisHelpers.IsValidGuid(newRecGuid)) {
+                    DisplayCrmAlertDialog('Unable to add product due to errors.');
+                    break;
+                }
+                self.FireAfterCreateJSCallback(newRecGuid);
+            }
+            self.RefreshDGrid();
+        };
+
+        self.DisplayNativeProductSelectCallback = function (result) {
+            // result.items[0].id contains {}
+            if ((result) && (result.items) && (result.items[0].id) && (result.items[0].name)) {
+                var existing = [];
+                var eresult = null;
+                var finalproducts = '';
+
+                // Get a list of this opportunity opportunityproduct existing products
+                var opfetch = '<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">' +
+                '<entity name="' + self.CurDetail.LogicalName + '">' +
+                '<attribute name="productid" />' +
+                '<attribute name="' + self.CurDetail.PrimaryIdAttribute + '" />' +
+                '<order attribute="productid" descending="false" />' +
+                '<filter type="and">' +
+                    '<condition attribute="' + self.CurDetail.Parent.PrimaryIdAttribute + '" operator="eq" uitype="' + self.CurDetail.Parent.LogicalName + '" value="' + _thisHelpers.AddCurlyBrace(_thisGlobals.ParentFormEntityId) + '" />' +
+                    '<condition attribute="productid" operator="not-null" />' +
+                '</filter>' +
+                '</entity>' +
+                '</fetch>';
+                if (_thisGlobals.UseWebApi) {
+                    eresult = SdkWebAPI.getFetchXml(self.CurDetail.LogicalCollectionName, opfetch);
+                } else {
+                    eresult = XrmServiceToolkit.Soap.Fetch(opfetch, false);
+                }
+                var fetchResult = (_thisGlobals.UseWebApi) ? eresult.Value : eresult;
+                if ((fetchResult) && (fetchResult.length > 0)) {
+                    for (var i = 0; i < fetchResult.length; i++) {
+                        if (_thisGlobals.UseWebApi) {
+                            existing.push(fetchResult[i]['_productid_value@OData.Community.Display.V1.FormattedValue']); //.replace(/[{}]/g, ''));
+                        } else {
+                            existing.push(fetchResult[i].attributes['productid'].name); // .id.replace(/[{}]/g, ''));
+                        }
+                    }
+                }
+                // Do not allow duplicates
+                for (var i = 0; i < result.items.length; i++) {
+                    if (existing.length > 0) {
+                        var toadd = result.items[i].name; // .id.replace(/[{}]/g, '');
+                        if (existing.MatchExists(toadd) != -1) {
+                            //Duplicate Product. By passing...
+                            continue;
+                        }
+                    }
+                    finalproducts += '<value>' + result.items[i].id + '</value>';
+                }
+                // Get products to add
+                if (finalproducts.length == 0) {
+                    //No new product selected
+                    return;
+                }
+                // productpricelevel
+                var fetchXml = '<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">' +
+                  '<entity name="productpricelevel">' +
+                    '<attribute name="productid" />' +
+                    '<attribute name="productnumber" />' + // Product ID 
+                    '<attribute name="uomid" />' + // unit
+                    '<order attribute="productnumber" descending="false" />' +
+                    '<filter type="and"><condition attribute="productpricelevelid" operator="in">' +
+                    finalproducts +
+                    '</condition></filter>' +
+                    '</entity>' +
+                    '</fetch>';
+                if (_thisGlobals.UseWebApi) {
+                    eresult = SdkWebAPI.getFetchXml('productpricelevels', fetchXml);
+                } else {
+                    eresult = XrmServiceToolkit.Soap.Fetch(fetchXml, false);
+                }
+
+                var fetchResult = (_thisGlobals.UseWebApi) ? eresult.Value : eresult;
+
+                if ((fetchResult) && (fetchResult.length > 0)) {
+                    var selected = [];
+                    for (var i = 0; i < fetchResult.length; i++) {
+                        var ptoadd = null;
+                        if (_thisGlobals.UseWebApi) {
+                            ptoadd = {
+                                productid: fetchResult[i]['_productid_value'],
+                                defaultuomid: fetchResult[i]['_uomid_value']
+                            };
+                        } else {
+                            ptoadd = {
+                                productid: fetchResult[i].attributes['productid'].id,
+                                defaultuomid: fetchResult[i].attributes['uomid'].id
+                            };
+                        }
+                        if (ptoadd) {
+                            selected.push(ptoadd);
+                        }
+                    }
+                    
+                    self.AddExistingProducts(selected);
+                } else {
+                    LogEx('No products fetched');
+                }
+            }
+        };
+
+        self.DisplayNativeProductSelect = function () {
+            // price list items (productpricelevel) 1026
+            var url = "/_controls/lookup/lookupinfo.aspx?LookupStyle=multi&objecttypes=1026&PriceLevelId=" + self.PriceList.id + "&currentid=" + self.PriceList.id + "&currentObjectType=3";
+            DisplayNativeDialog(url, self.DisplayNativeProductSelectCallback);
+        };
+
+        self.Initialize = function () {
             $('#products_selectall').on('click', function (e) {
                 e.stopPropagation();
                 $('#products_table').find('input').prop("checked", $(this).is(':checked'));
@@ -10862,18 +11282,12 @@ var MSProductGridHelper = (function () {
 
             $('#products_btnok').on('click', function (e) {
                 e.stopPropagation();
-
                 var selected = $('#products_table').find('input[type="checkbox"]:checked');
-                if ((selected) && (selected.length)) {
-                    for (var i = 0; i < selected.length; i++) {
-                        //Log($(selected[i]).attr('data-product-id'));
-                        // add product
-                        // if bundle (family) 3, get the associated products and add them as well
-                        // ensure that there are no duplicate products that exists in the bundle gets added twice
-                    }
-                }
-
                 $('#products_flyoutOverlay').hide();
+
+                if ((selected) && (selected.length)) {
+                    self.AddExistingProducts(selected);
+                }
             });
 
             $('#products_btncancel').on('click', function (e) {
@@ -10893,27 +11307,71 @@ var MSProductGridHelper = (function () {
             DialogOptions, null, null, callback);
     }
 
-    function GetObjectTypeCode(schemaname) {
+    function GetObjectTypeCode(logicalname) {
         var otc = -1;
-        switch (schemaname) {
+        switch (logicalname) {
+            case "opportunity":
+                otc = 3;
+                break;
+            case "quote":
+                otc = 1084;
+                break;
+            case "salesorder":
+                otc = 1088;
+                break;
+            case "invoice":
+                otc = 1090;
+                break;
+            case "product":
+                otc = 1024;
+                break;
+            case "productassociation":
+                otc = 1025;
+                break;
+            case "productpricelevel":
+                otc = 1026;
+                break;
+            case "productsubstitute":
+                otc = 1028;
+                break;
             case "opportunityproduct":
-                otc = '1083';
+                otc = 1083;
                 break;
             case "invoicedetail":
-                otc = '1091';
+                otc = 1091;
                 break;
             case "quotedetail":
-                otc = '1085';
+                otc = 1085;
                 break;
             case "salesorderdetail":
-                otc = '1089';
+                otc = 1089;
+                break;
+            case "contactinvoices":
+                otc = 17;
+                break;
+            case "contactquotes":
+                otc = 18;
+                break;
+            case "contactorders":
+                otc = 19;
+                break;
+            case "leadproduct":
+                otc = 27;
+                break;
+            case "entitlementproducts":
+                otc = 6363;
                 break;
             default:
         }
         return otc;
     }
     // Product ID, Product, Unit, PriceList
-    function GetProductsForPriceList(id, callback, errorCallback) {
+    function GetProductsForPriceList(id, callback, errorCallback, targettableid) {
+        // JS callback
+        var additions = null;
+        if (window.parent.DCrmEgGridOnBeforeFetchProducts) {
+            additions = window.parent.DCrmEgGridOnBeforeFetchProducts(self.DGridInfo);
+        }
         var fetchXml = '<fetch version="1.0" output-format="xml-platform" mapping="logical" distinct="false">' +
           '<entity name="product">' +
             '<attribute name="name" />' + // Name and Product ID are identical
@@ -10921,23 +11379,41 @@ var MSProductGridHelper = (function () {
             '<attribute name="productnumber" />' + // Product ID 
             '<attribute name="description" />' +
             '<attribute name="productstructure" />' + // Option set 1 product, 3 product bundle
-            '<attribute name="defaultuomscheduleid" />' + //default unit
+            '<attribute name="defaultuomscheduleid" />' + //default unit group
             '<attribute name="standardcost" />' +
             '<attribute name="quantityonhand" />' +
-            '<attribute name="defaultuomid" />' + // default unit group
+            '<attribute name="defaultuomid" />' + // default unit
             '<attribute name="currentcost" />' +
             '<order attribute="productnumber" descending="false" />' +
             '<filter type="and">' +
               '<condition attribute="statecode" operator="eq" value="0" />' +
-              '<condition attribute="productstructure" operator="in">' +
-                '<value>1</value>' +
-                '<value>3</value>' +
-              '</condition>' +
-              '<condition attribute="pricelevelid" operator="eq" uitype="pricelevel" value="' + _thisHelpers.AddCurlyBrace(id) + '" />' +
+              '<condition attribute="productstructure" operator="eq" value="1" />';
+              //'<condition attribute="productstructure" operator="in">' +
+              //  '<value>1</value>' +
+              //  '<value>3</value>' +
+        //'</condition>' +
+
+/*
+       <condition attribute="productid" operator="not-in">
+        <value uiname="CRM Online: Standard (sample)" uitype="product">{224D2B54-9C79-E611-80DB-08002738AA19}</value>
+        <value uiname="Office 365 and CRM Online: Small Business (sample)" uitype="product">{084D2B54-9C79-E611-80DB-08002738AA19}</value>
+        <value uiname="SharePoint Online (sample)" uitype="product">{164D2B54-9C79-E611-80DB-08002738AA19}</value>
+      </condition>
+      <condition attribute="productid" operator="not-null" />
+ */
+
+        if (!axis.isNull(additions) && !axis.isUndefined(additions)) {
+            fetchXml += additions;
+        }
+        fetchXml += '<condition attribute="pricelevelid" operator="eq" uitype="pricelevel" value="' + _thisHelpers.AddCurlyBrace(id) + '" />' +
             '</filter>' +
           '</entity>' +
           '</fetch>';
-        XrmServiceToolkit.Soap.Fetch(fetchXml, false, callback, errorCallback);
+        if (_thisGlobals.UseWebApi) {
+            SdkWebAPI.getFetchXml('products', fetchXml, callback, errorCallback, targettableid);
+        } else {
+            XrmServiceToolkit.Soap.Fetch(fetchXml, false, callback, errorCallback, targettableid);
+        }
     }
 
     function GetProductsFromProductBundle(id) {
@@ -10960,25 +11436,8 @@ var MSProductGridHelper = (function () {
          */
     }
 
-    // dcrmeg_product
-    // dcrmeg_productfamily
-    // dcrmeg_productbundle
-    // dcrmeg_writeinproduct
-    // dcrmeg_tabsectionright
-    // dcrmeg_tabsectiondown
-
-    //self.DisplayNativeProductSelectCallback = function () {
-    //    if ((result) && (result.items) && (result.items[0].id) && (result.items[0].name)) {
-    //        // go through each product and product family selected
-    //    }
-    //};
-
-    //self.DisplayNativeProductSelect = function () {
-    //    var url = "/_controls/lookup/lookupinfo.aspx?LookupStyle=multi&objecttypes=1024";
-    //    DisplayNativeDialog(url, self.DisplayNativeProductSelectCallback);
-    //};
-
     return MSProductGridHelper;
+
 })();
 
 var FormattingOptions = (function () {
@@ -11032,22 +11491,6 @@ var DCrmEGConfigurationManager = (function () {
             RelatedToParentLILookupSchemaName: (data.RelatedToParentLILookupSchemaName) ? data.RelatedToParentLILookupSchemaName : undefined
         };
 
-        // Query the following given current page recordid
-        self.MSProductGrid = false;
-        // Need collectionnames, schema and logicalname and otc
-        // Or if it is just a product grid on an entity
-        // 1083, 1091, 1085. 1089
-        // ['opportunityproduct', 'invoicedetail', 'quotedetail', 'salesorderdetail']
-        // otc for the following
-        // ['opportunity', 'quote', 'salesorder', 'invoice', 'product']
-        // CRM 2015, ...
-        // Opportunity (opportunityproduct), Quote (quotedetail), Order (salesorderdetail), and Invoice (invoicedetail)
-        //if ((['opportunityproduct', 'invoicedetail', 'quotedetail', 'salesorderdetail'].MatchExists(self.Entity.SchemaName) != -1) &&
-        //    (['opportunity', 'quote', 'salesorder', 'invoice'].MatchExists(_thisGlobals.ParentFormEntityName) != -1)) {
-        //    self.MSProductGrid = true;
-        //    self.MSProductGridHelperc = new MSProductGridHelper(self.Entity.SchemaName);
-        //}
-
         self.GridTitle = ((data.GridTitle) && (data.GridTitle.length) && (data.GridTitle.length > 0)) ? data.GridTitle : data.label;
         self.DisplayClearFilterButton = ((data.DisplayClearFilterButton) && (data.DisplayClearFilterButton == 'false')) ? false : true;
         self.DisplayHeaderFilter = ((data.DisplayHeaderFilter) && (data.DisplayHeaderFilter == 'false')) ? false : true;
@@ -11082,8 +11525,21 @@ var DCrmEGConfigurationManager = (function () {
 
         self.GridCustomIdentifier = (data.GridCustomIdentifier && data.GridCustomIdentifier.length) ? data.GridCustomIdentifier : '';
 
-        DCrmEditableGrid.Globals.MinCellWidth = self.GridHeaderMinimumWidth;
+        self.MSProductGrid = false;
+        // Opportunity (opportunityproduct), Quote (quotedetail), Order (salesorderdetail), and Invoice (invoicedetail)
+        if ((['opportunityproduct', 'invoicedetail', 'quotedetail', 'salesorderdetail'].MatchExists(self.Entity.SchemaName) != -1) &&
+            (['opportunity', 'quote', 'salesorder', 'invoice'].MatchExists(_thisGlobals.ParentFormEntityName) != -1)) {
+            self.MSProductGrid = true;
+            self.MSProductGridHelperc = new MSProductGridHelper(
+            {
+                ParentEntityName: self.Entity.Label,
+                ParentEntitySchemaName: self.Entity.SchemaName,
+                GridCustomIdentifier: self.GridCustomIdentifier,
+                ConfigID: self.ConfigID
+            });
+        }
 
+        DCrmEditableGrid.Globals.MinCellWidth = self.GridHeaderMinimumWidth;
         _thisGlobals.SystemCurrencyPrecision = self.SystemCurrencyPrecision;
 
         self.SelectedFields = undefined;
@@ -11924,13 +12380,18 @@ function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGu
     // ? add an extra cell to the end to ensure the subgrid will utilize the entire available space or ?
 
     var AggregateFields = [];
+    var headertitle = null;
 
     for (var headerIndex = 0; headerIndex < data.SelectedFields.length; headerIndex++) {
         var item = data.SelectedFields[headerIndex];
+        headertitle = (item.CustomName) ? item.CustomName : item.Name;
 
-        $theader = $('<th></th>')
-            .attr(_thisGlobals.ToolTipAttrName, item.Name)
+        $theader = $('<th data-original-label="' + item.Name + '"></th>')
+            .attr(_thisGlobals.ToolTipAttrName, headertitle)
             .appendTo($tr);
+        if (item.CustomName) {
+            $theader.attr('data-custom-label', item.CustomName);
+        }
         // Header width controls the width of the column (body and footer cells)
         totalColWidths += _thisHelpers.SetHeaderWidth($theader, item.RealWidth, calculatedWidth);
 
@@ -12064,8 +12525,10 @@ function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGu
                 (attrtype == _thisGlobals.CrmFieldTypes.BooleanType) ||
                 (attrtype == _thisGlobals.CrmFieldTypes.State) ||
                 (attrtype == _thisGlobals.CrmFieldTypes.Status)) {
-                var hid = _thisHelpers.GenerateUUID();
-                $theader.attr('id', hid);
+                var hid = (headerIdToUpdate) ? headerIdToUpdate : _thisHelpers.GenerateUUID();
+                if (axis.isNull(headerIdToUpdate)) {
+                    $theader.attr('id', hid);
+                }
                 var optreadonly = new OptionSetDataNoEditor(attrtype, opSetData, data.Entity.SchemaName, item.SchemaName, hid);
             }
 
@@ -12108,8 +12571,8 @@ function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGu
         }
 
         var $firstSpan = $('<div class="' + spanclass + '"></div>')
-            .text(item.Name)
-            .attr(_thisGlobals.ToolTipAttrName, item.Name)
+            .text(headertitle)
+            .attr(_thisGlobals.ToolTipAttrName, headertitle)
             .appendTo($theader);
 
         if (InitialSortData.FirstField) {
@@ -12203,7 +12666,7 @@ function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGu
             if (item.AggregateOp) {
                 AggregateFields.push({ SchemaName: item.SchemaName, AggregateOp: item.AggregateOp, CellIndex: headerIndex + 1 });
             }
-            $("<img title='" + _thisGlobals.Translation_Labels.AggregateFunctions + "' class='aggregate'></img><div class='footercelltext wrapheadertitle'></div>").appendTo($footercellInner);
+            $('<div title="' + _thisGlobals.Translation_Labels.AggregateFunctions + '" class="aggregate"></div><div class="footercelltext wrapheadertitle"></div>').appendTo($footercellInner);
         } else {
             $("<div class='footercelltext'></div>").appendTo($footercellInner);
         }
@@ -12213,6 +12676,7 @@ function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGu
             ParentEntityName: data.Entity.Label,
             ParentEntitySchemaname: data.Entity.SchemaName,
             FieldLabel: item.Name,
+            CustomFieldLable: item.CustomName,
             FieldSchemaName: item.SchemaName.toLowerCase(),
 
             RequireValue: requiered,
@@ -13166,7 +13630,10 @@ var GridLoaderHelper = (function () {
                                                 return letter.toUpperCase();
                                             });
                                         }
-                                        _thisHelpers.SetHeaderCellText($($headers[iinner + 1]), lbl);
+                                        if ($($headers[iinner + 1]).attr('data-custom-label')) {
+                                        } else {
+                                            _thisHelpers.SetHeaderCellText($($headers[iinner + 1]), lbl);
+                                        }
                                     }
                                 }
                             }
@@ -13206,7 +13673,10 @@ var GridLoaderHelper = (function () {
                                             return letter.toUpperCase();
                                         });
                                     }
-                                    _thisHelpers.SetHeaderCellText($($headers[iinner + 1]), lbl);
+                                    if ($($headers[iinner + 1]).attr('data-custom-label')) {
+                                    } else {
+                                        _thisHelpers.SetHeaderCellText($($headers[iinner + 1]), lbl);
+                                    }
                                 }
                             }
                         }
@@ -13662,6 +14132,16 @@ function GetGridRowData(gridIdentifier, tableid, targetByRowGuid) {
     return null;
 }
 
+var FieldUpdateHelper = (function () {
+
+    function FieldUpdateHelper(fieldsdata) {
+        // fieldsdata = [fielddata]
+        // fielddata = {RecGuid: , CellIndex: , Value: single or struc for optionset and lookup}
+    }
+
+    return FieldUpdateHelper;
+})();
+
 // External
 var DCrmEgGrid = (function (DCrmEgGrid) {
 
@@ -13697,6 +14177,24 @@ var DCrmEgGrid = (function (DCrmEgGrid) {
             theGrid.RefreshGridRows(true);
         }
     }
+    DCrmEgGrid.TotalRecordCount = function (gridIdentifier, schemaname) {
+        var theGrid = null;
+        if (IsNullOrUndefinedOrNoLength(gridIdentifier)) {
+            // use the first config
+            theGrid = _thisGlobals.DCrmEGConfiguration[0].FindGridBySchemaname(schemaname);
+        } else {
+            var config = FindDCrmEGConfigurationByGridIdentifier(gridIdentifier);
+            if (config) {
+                theGrid = config.FindGridBySchemaname(schemaname);
+            }
+        }
+
+        if (theGrid) {
+            return theGrid.activeOptions.TotalRecordsCount;
+        }
+
+        return 0;
+    }
     DCrmEgGrid.DisableGrid = function (gridIdentifier, schemaname, disable) {
         var theGrid = null;
         _thisGlobals.FormIsReadOnly = disable;
@@ -13714,6 +14212,21 @@ var DCrmEgGrid = (function (DCrmEgGrid) {
             theGrid.SetGridReadonly(disable);
         }
     }
-
+    DCrmEgGrid.GridRowData = function (gridIdentifier, schemaname, recGuid) {
+        var theGrid = null;
+        if (IsNullOrUndefinedOrNoLength(gridIdentifier)) {
+            // use the first config
+            theGrid = _thisGlobals.DCrmEGConfiguration[0].FindGridBySchemaname(schemaname);
+        } else {
+            var config = FindDCrmEGConfigurationByGridIdentifier(gridIdentifier);
+            if (config) {
+                theGrid = config.FindGridBySchemaname(schemaname);
+            }
+        }
+        if (theGrid) {
+            return GetGridDataInternal(theGrid, recGuid);
+        }
+        return null;
+    }
     return DCrmEgGrid;
 }(DCrmEgGrid || {}));

@@ -1,3 +1,38 @@
+v1.0.6.7
+=========
+
+Bug Fixes:
+
+1- Error when cloning records with readonly Lookup fields
+
+2- If a top-level record is expanded (+ button) to show related records then the New toolbar button on the top-level record is clicked, 
+an error dialog appears. Both records are configured for "Inline create, allow blank required lookup fields" with no default values provided. 
+When the top-level record is collapsed, a new record can be created without issue.
+
+3- If you click the New toolbar button and hit the SPACE key immediately afterwards, 
+it creates two records and the first column of the grid is duplicated and pushed horizontally. The obvious workaround is to not hit the spacebar. 
+
+HTML5 button default behavior. When button has focus, pressing enter or spacebar simulates a click. Changed behavior to ignore spacebar when button has focus.
+
+4- Issue retrieving GlobalOptionSet using api v8.0 (CRM 2016)
+
+Additions:
+
+1- Text field with URL format: CTRL+Click to open the link like in Outlook
+2- Grid API - DCrmEgGrid.GridRowData to retrieve a row data using record guid
+3- Grid API - DCrmEgGrid.TotalRecordCount to retrieve total record count. This is not the total records displayed.
+4- Replacement for the following native product related editable grids. The grid's (+) create new menu will display "Write-in Product" and "Existing Products" items.
+
+Entity to place the grid on			Entity to retreive data from
+Opportunity							opportunityproduct
+Quote								quotedetail
+Order								salesorderdetail
+Invoice								invoicedetail
+
+
+5- Set custom title for headers (configuration).
+6- Use default view for lookup dropdown menu. Only the condition parts not the attributes.
+
 v1.0.6.6
 ========
 

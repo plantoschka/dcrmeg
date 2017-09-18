@@ -199,6 +199,11 @@ Array.prototype.ExactMatchExists = function (str) {
                             .attr('data-item-realwidth', WidthPercentage)
                             .attr('data-item-lookuptargetentity', item.LookupTargetEntity)
                             .appendTo($td);
+
+                        if (item.CustomName) {
+                            $chk.attr('data-custom-name', item.LookupTargetEntity);
+                        }
+
                         $('<label></label>')
                             .attr('for', id)
                             .text(item.Name)
@@ -1626,6 +1631,8 @@ function SetupSelectedFieldFormattingRow(htr, row1, row2, item, formattingopions
 function SetupSelectedFieldRow(tbody, item) {
 
     var id = DCrmEditableGrid.Helper.GenerateUUID();
+    var dValue = null;
+
     row = $('<tr></tr>').attr('id', id)
         .attr('data-item-realindex', item.RealIndex)
         .attr('data-item-realwidth', item.RealWidth)
@@ -1643,7 +1650,27 @@ function SetupSelectedFieldRow(tbody, item) {
     .appendTo(tbody);
 
     $('<td><span class="sortable-drag-handle">&#9776;</span></td>').appendTo(row);
-    var $td = $('<td>' + item.Name + '</td>').appendTo(row);
+
+    var $td = $('<td data-original-name="' + item.Name + '"></td>').appendTo(row);
+    if (item.CustomName) {
+        $td.attr('data-custom-name', item.CustomName);
+    }
+    $('<input style="width:130px;" type="text" />')
+        .attr('data-tilename-id', id)
+        .attr('title', 'To reset the label to original, clear the text field and click outside.')
+        .val(((item.CustomName) ? item.CustomName : item.Name))
+        .on('blur', function (e) {
+            e.stopPropagation();
+            var val = $(this).val();
+            if ((val) && (val.length > 0)) {
+                $(this).parent().attr('data-custom-name', val);
+            } else {
+                $(this).parent().removeAttr('data-custom-name');
+                $(this).val($(this).parent().attr('data-original-name'));
+            }
+            SaveFields();
+        })
+        .appendTo($td);
     $('<td>' + item.SchemaName + '</td>').appendTo(row);
     $('<td>' + item.AttrType + '</td>').appendTo(row);
     $('<td>' + item.RequieredLevel + '</td>').appendTo(row);
@@ -1670,7 +1697,7 @@ function SetupSelectedFieldRow(tbody, item) {
 
 
     // Setup create default values 
-    var dValue = item.DefaultValue;
+    dValue = item.DefaultValue;
     var optionset = null;
 
     $td = $('<td></td>').appendTo(row);
@@ -2364,10 +2391,13 @@ function PopulateSavedFields() {
                 DefaultView: ((items.length >= 14 && items[13].length > 0) ? items[13] : null),
                 DefaultViewObjectTypeCode: ((items.length >= 15 && items[14].length > 0) ? items[14] : null),
                 AggregateOp: ((items.length >= 16 && items[15].length > 0) ? items[15] : null),
+                CustomName: ((items.length >= 17 && items[16].length > 0) ? items[16] : null),
                 RealIndex: ''
             });
         });
     }
+
+    //console.log('reloaded fields', _thisGlobals.ReloadedSavedFields);
 
     _thisGlobals.ReloadedFieldConditions = [];
     if (_thisGlobals._CurConfiguration.Conditions) {
@@ -2405,10 +2435,18 @@ function SaveFields(reset) {
     var ftype = '';
     var val = null;
     var viewid = null;
+    var customname = '';
 
     for (var i = 0; i < $rows.length; i++) {
 
         $div = $($rows[i]);
+
+        customname = '';
+        $cell = $($rows[i].cells[1]);
+        if ($cell.attr('data-custom-name')) {
+            customname = $cell.attr('data-custom-name');
+        }
+
         $cell = $($rows[i].cells[7]);
         ftype = $div.attr('data-item-attrtype');
 
@@ -2475,7 +2513,8 @@ function SaveFields(reset) {
             val + _thisGlobals._SEPERATOR +
             viewid + _thisGlobals._SEPERATOR +
             viewentityname + _thisGlobals._SEPERATOR +
-            aggregate;
+            aggregate + _thisGlobals._SEPERATOR +
+            customname;
         } else {
             headersinfo =
                 $div.attr('data-item-label') + _thisGlobals._SEPERATOR +
@@ -2493,7 +2532,8 @@ function SaveFields(reset) {
             val + _thisGlobals._SEPERATOR +
             viewid + _thisGlobals._SEPERATOR +
             viewentityname + _thisGlobals._SEPERATOR +
-            aggregate;
+            aggregate + _thisGlobals._SEPERATOR +
+            customname;
         }
     }
 
@@ -2522,6 +2562,10 @@ function SelectFieldsCallback(selectedCheckbox) {
             ReadOnly: selectedCheckbox.attr('data-item-readonly'),
             LookupTargetEntity: selectedCheckbox.attr('data-item-lookuptargetentity')
         };
+        if (selectedCheckbox.attr('data-custom-name')) {
+            item.CustomName = selectedCheckbox.attr('data-custom-name');
+        }
+
         SetupSelectedFieldRow(tbody, item);
 
         var formattable = $('#formattingcolors');

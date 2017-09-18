@@ -1685,7 +1685,7 @@ OData-Version: 4.0
 
         var async = !!successCallback;
         var uri = null;
-        if (SDKWEBAPI_VERSION_USERD == '8.1') {
+        if ((SDKWEBAPI_VERSION_USERD == '8.0') || (SDKWEBAPI_VERSION_USERD == '8.1')) {
             // Get meta data ids and then get the metadata
             var metadataIds = SdkWebAPI.GetMetaDataId(entityLogicalName, attributeLogicalName);
 

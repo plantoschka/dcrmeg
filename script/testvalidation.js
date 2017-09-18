@@ -55,6 +55,7 @@ function SomeFieldChangeHandler() {
 
                     var gridData = frameWindow.DCrmEgGrid.GridData(null, 'account');
                     Log("Grid Data", gridData);
+                    Log("Total record count [" + frameWindow.DCrmEgGrid.TotalRecordCount(null, 'account') + "]");
 
                     //for (var i = 0; i < gridData.Headers.length; i++) {
                     //    var header = gridData.Headers[i];
@@ -82,8 +83,14 @@ function SomeFieldChangeHandler() {
                     // frameWindow.DCrmEgGrid.RefreshGrid(null, 'account');
 
                     // Disable or enable grid
-                     frameWindow.DCrmEgGrid.DisableGrid(null, 'account', _DisableGrid);
-                     _DisableGrid = !_DisableGrid;
+                    // frameWindow.DCrmEgGrid.DisableGrid(null, 'account', _DisableGrid);
+                    // _DisableGrid = !_DisableGrid;
+
+                    // Get grid row data by record guid
+                    // var gridRow = frameWindow.DCrmEgGrid.GridRowData(null, 'account', '2F7D60C9-1879-477F-8C0B-883407CAAB16');
+                    // for (var i = 0; i < gridRow.Cells.length; i++) {
+                    //      var cell = gridRow.Cells[i];
+                    // }
                 } else {
                     Log("No DCrmEgGrid");
                 }
@@ -101,6 +108,7 @@ function ValidateDCrmEgGrid(param, field) {
     return allow;
 
     Log('GridCustomIdentifier [' + field.GridCustomIdentifier + ']');
+    // field.CustomFieldLable
     Log("FieldSchemaName [" + field.FieldSchemaName + "] FieldLabel [" + field.FieldLabel + "] ParentEntitySchemaName [" + field.ParentEntitySchemaName + "] ParentEntityLabel [" + field.ParentEntityLabel + "]");
     Log("Record Guid [" + param.RecordGuid + "]\r\n\r\n");
     
