@@ -26,14 +26,16 @@ Additions:
 
 4- Replacement for the following native product related editable grids. The grid's (+) create new menu will display "Write-in Product" and "Existing Products" items.
 
-Entity to place the grid on			Entity to retreive data from
-Opportunity							opportunityproduct
-Quote								quotedetail
-Order								salesorderdetail
-Invoice								invoicedetail
+Opportunity-opportunityproduct
 
+Quote-quotedetail
+
+Order-salesorderdetail
+
+Invoice-invoicedetail
 
 5- Set custom title for headers (configuration).
+
 6- Use default view for lookup dropdown menu. Only the condition parts not the attributes.
 
 v1.0.6.6
