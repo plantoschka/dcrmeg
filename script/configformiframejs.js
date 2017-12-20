@@ -608,7 +608,11 @@ function LogEx(s) {
     }
 }
 function DisplayCrmAlertDialog(msg) {
-    window.parent.Xrm.Utility.alertDialog(msg);
+    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+        window.parent.Xrm.Utility.alertDialog(msg);
+    } else {
+        window.parent.Xrm.Navigation.openAlertDialog(msg);
+    }
 }
 Date.parseDate = function (input, format) {  
     format = format || _thisGlobals.userDatetimeSettings.DateFormat;

@@ -814,9 +814,27 @@ var _thisGlobals = DCrmEditableGrid.Globals;
 var _thisHelpers = DCrmEditableGrid.Helper;
 
 function DisplayCrmAlertDialog(msg) {
-    // TODO
-    // Replace with Navigation methods alert, oprn form, ....
-    window.parent.Xrm.Utility.alertDialog(msg);
+    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+        window.parent.Xrm.Utility.alertDialog(msg);
+    } else {
+        window.parent.Xrm.Navigation.openAlertDialog(msg);
+    }
+}
+
+function OpenCrmForm(logicalName, RecGuid, openInNewWindow) {
+    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+        window.parent.Xrm.Utility.openEntityForm(logicalName, RecGuid);
+    } else {
+        var entityFormOptions = {};
+        entityFormOptions["entityName"] = logicalName;
+        if (RecGuid) {
+            entityFormOptions["entityId"] = RecGuid;
+        }
+        if (openInNewWindow) {
+            entityFormOptions["openInNewWindow"] = true;
+        }
+        window.parent.Xrm.Navigation.openForm(entityFormOptions);
+    }
 }
 
 function LogIt(s, o) {
@@ -4844,7 +4862,7 @@ var CrmEditableGrid = (function () {
                 DisplayNewButtonMenu(self, $(this));
             } else if (self.activeOptions.NewBtnBehavoir == "20") {
                 try {
-                    window.parent.Xrm.Utility.openEntityForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname);
+                    OpenCrmForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname);
                 } catch (e) {
                     msg = e.message;
                 }
@@ -5293,10 +5311,10 @@ list of translated languages
                             }
                         } else if (id == 'OpenRecordCtxMenuItem') {
                             if (self.contextMenuTarget) {
-                                openEntityRecord(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.RecordGuid));
+                                OpenCrmForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.RecordGuid), true);
                             }
                         } else if (id == 'OpenLookupRecordCtxMenuItem') {
-                            openEntityRecord(self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.Lookup.LogicalName), self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.Lookup.Guid));
+                            OpenCrmForm(self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.Lookup.LogicalName), self.contextMenuTarget.attr(_thisGlobals.DataAttr.Cell.Lookup.Guid), true);
                         } else if (id == 'ClearValueCtxMenuItem') {
                             if (self.contextMenuTarget) {
 
@@ -5655,11 +5673,11 @@ list of translated languages
                             var $parentrow = $(this).parent().parent();
                             if (($parentrow) && ($parentrow.length > 0)) {
                                 if (gridOptions.OpenRecordBehavoir == '10') {
-                                    window.parent.Xrm.Utility.openEntityForm(gridOptions.ParentEntityInfo.ParentEntitySchemaname,
+                                    OpenCrmForm(gridOptions.ParentEntityInfo.ParentEntitySchemaname,
                                         $($parentrow).attr(_thisGlobals.DataAttr.Cell.RecordGuid));
                                 } else {
-                                    openEntityRecord(gridOptions.ParentEntityInfo.ParentEntitySchemaname,
-                                        $($parentrow).attr(_thisGlobals.DataAttr.Cell.RecordGuid));
+                                    OpenCrmForm(gridOptions.ParentEntityInfo.ParentEntitySchemaname,
+                                        $($parentrow).attr(_thisGlobals.DataAttr.Cell.RecordGuid), true);
                                 }
                             }
                         }).appendTo($tmpCell);
@@ -7866,10 +7884,18 @@ You can’t set the values for partylist or regarding lookups.
                     if (tmp.endsWith('customerid') || tmp.endsWith('ownerid')) {
                         parameters[self.activeOptions.ParentChildLookupInfo.LookupSchemaName + "type"] = self.activeOptions.ParentChildLookupInfo.ParentSchemaName;
                     }
-                    window.parent.Xrm.Utility.openEntityForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, parameters);
+
+                    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+                        window.parent.Xrm.Utility.openEntityForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, parameters);
+                    } else {
+                        var entityFormOptions = {};
+                        entityFormOptions["entityName"] = self.activeOptions.ParentEntityInfo.ParentEntitySchemaname;
+                        entityFormOptions["openInNewWindow"] = true;
+                        window.parent.Xrm.Navigation.openForm(entityFormOptions, parameters);
+                    }
 
                 } else {
-                    window.parent.Xrm.Utility.openEntityForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, null);
+                    OpenCrmForm(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname);
                 }
             } catch (e) {
                 msg = e.message;
@@ -7884,21 +7910,41 @@ You can’t set the values for partylist or regarding lookups.
                 }
             }
             try {
+                var entityFormOptions = {};
+                entityFormOptions["entityName"] = self.activeOptions.ParentEntityInfo.ParentEntitySchemaname;
+                entityFormOptions["useQuickCreateForm"] = true;
+
                 var callback = function (obj) {
                     LogIt("Created new " + obj.savedEntityReference.entityType + " named '" + obj.savedEntityReference.name + "' with id:" + obj.savedEntityReference.id);
                 }
                 if (self.activeOptions.ParentChildLookupInfo.Related) {
-                    var param = {
-                        entityType: self.activeOptions.ParentChildLookupInfo.ParentSchemaName,
-                        id: self.activeOptions.ParentChildLookupInfo.Guid
-                    };
-                    window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, param, null).then(callback, function (error) {
-                        LogEx(error.message);
-                    });
+                    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+                        var param = {
+                            entityType: self.activeOptions.ParentChildLookupInfo.ParentSchemaName,
+                            id: self.activeOptions.ParentChildLookupInfo.Guid
+                        };
+                        window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, param, null).then(callback, function (error) {
+                            LogEx(error.message);
+                        });
+                    } else {
+                        entityFormOptions["createFromEntity"] = {
+                            entityType: self.activeOptions.ParentChildLookupInfo.ParentSchemaName,
+                            id: self.activeOptions.ParentChildLookupInfo.Guid
+                        };
+                        window.parent.Xrm.Navigation.openForm(entityFormOptions).then(callback, function (error) {
+                            LogEx(error.message);
+                        });
+                    }
                 } else {
-                    window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, null).then(callback, function (error) {
-                        LogEx(error.message);
-                    });
+                    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+                        window.parent.Xrm.Utility.openQuickCreate(self.activeOptions.ParentEntityInfo.ParentEntitySchemaname, null, null).then(callback, function (error) {
+                            LogEx(error.message);
+                        });
+                    } else {
+                        window.parent.Xrm.Navigation.openForm(entityFormOptions).then(callback, function (error) {
+                            LogEx(error.message);
+                        });
+                    }
                 }
             } catch (e) {
                 msg = e.message;
@@ -9291,9 +9337,9 @@ function WebApiGetUserSettingsSuccessCallback(settings) {
 
     _thisGlobals.userDatetimeSettings.DateTimeFormat = _thisGlobals.userDatetimeSettings.DateFormat + " " + _thisGlobals.userDatetimeSettings.TimeFormat;
 
-    if ((axis.isUndefined(result.currencydecimalprecision)) ||
-        (axis.isNull(result.currencydecimalprecision))) {
-        result.currencydecimalprecision = _thisGlobals.SystemCurrencyPrecision;
+    if (((axis.isUndefined(result.currencydecimalprecision)) ||
+        (axis.isNull(result.currencydecimalprecision))) && (SDKWEBAPI_APIVERSION_USERD >= 9)) {
+        result.currencydecimalprecision = SDKWEBAPI_GLOBALCONTEXT.organizationSettings.attributes['currencyDecimalPrecision'];
     }
 
     // Need to be set first in options. +1

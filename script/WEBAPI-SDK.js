@@ -1348,6 +1348,8 @@ OData-Version: 4.0
         if (SDKWEBAPI_APIVERSION_USERD < 9) {
             prop.push("currencydecimalprecision");
         }
+        // for v9, will use the following
+        // SDKWEBAPI_GLOBALCONTEXT.organizationSettings.attributes['currencyDecimalPrecision']
         var url = getWebAPIPath() + 'usersettingscollection?$select=' + prop.join() + '&$filter=systemuserid eq ' + UserId;
 
         var req = new XMLHttpRequest();

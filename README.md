@@ -39,3 +39,4 @@
 <br>
 <img title="embeddashboard.PNG" src="https://github.com/mehrgithub/dcrmeg/raw/master/docs/Home_embeddashboard.PNG"></p>
 </div><div class="ClearBoth"></div>
+<p>Feel free to <a href="https://www.paypal.me/MehrdadHatteffi">donate</a> if this saved you some time or helped out :)</p>
