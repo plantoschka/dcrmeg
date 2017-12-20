@@ -1,3 +1,13 @@
+v1.0.6.8
+=========
+
+Bug Fix:
+Dynamics365 Online Ver 1612 (9.0.0.3172)
+
+Added support for new Client API V9.0
+Added two new solutions targeting Dynamics365 Online Ver 1612 (9.0.0.3172). Please see the Solutions sub folder.
+
+
 v1.0.6.7
 =========
 

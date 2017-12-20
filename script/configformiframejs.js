@@ -594,11 +594,9 @@ Array.prototype.ExactMatchExists = function (str) {
         return 0;
     };
 }(jQuery));
+
 var _thisGlobals = DCrmEditableGrid.Globals;
-_thisGlobals.xrmPage = window.parent.Xrm.Page;
-_thisGlobals.LoggedInUserID = _thisGlobals.xrmPage.context.getUserId();
-_thisGlobals.UserLcid = _thisGlobals.xrmPage.context.getUserLcid();
-_thisGlobals.UseWebApi = false;
+
 function LogIt(s) {
     if ((_thisGlobals.Debug) && (typeof console != "undefined") && (typeof console.debug != "undefined")) {
         console.log(s);
@@ -2313,7 +2311,7 @@ function ParentFormSaving(context) {
     var cancel = false;
 
     if (GetHiddenFieldValue(1) == undefined) {
-        window.parent.Xrm.Utility.alertDialog(_thisGlobals.Translation_Labels.TragetEntityReq);
+        DisplayCrmAlertDialog(_thisGlobals.Translation_Labels.TragetEntityReq);
         cancel = true;
     }
 
@@ -2329,7 +2327,7 @@ function ParentFormSaving(context) {
     //    try {
     //        var haveit = AllConfigsHaveFields();
     //        if (haveit.length > 0) {
-    //            window.parent.Xrm.Utility.alertDialog(_thisGlobals.Translation_Labels.FieldReq + ' ' + haveit);
+    //            DisplayCrmAlertDialog(_thisGlobals.Translation_Labels.FieldReq + ' ' + haveit);
     //            cancel = true;
     //        }
     //    } catch (e) {
@@ -3513,6 +3511,24 @@ function GetUserSettings() {
 /*Initialization*/
 function WebApiVersionCheckSuccessCallback(VersionResponse) {
     _thisGlobals.UseWebApi = true;
+    // TODO
+    // Replace with Form Context. How?
+    _thisGlobals.xrmPage = window.parent.Xrm.Page;
+
+    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+        _thisGlobals.LoggedInUserID = _thisGlobals.xrmPage.context.getUserId();
+        _thisGlobals.UserLcid = _thisGlobals.xrmPage.context.getUserLcid();
+        _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
+    } else {
+        _thisGlobals.LoggedInUserID = SDKWEBAPI_GLOBALCONTEXT.userSettings.userId;
+        _thisGlobals.UserLcid = SDKWEBAPI_GLOBALCONTEXT.userSettings.languageId;
+        _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
+    }
+
+    _thisGlobals.FormIsReadOnly = ((_thisGlobals.ParentFieldsFormType == 3) || (_thisGlobals.ParentFieldsFormType == 4));
+    if (_thisGlobals.ParentFieldsFormType != 1) {
+        $('#configguid').val(_thisGlobals.xrmPage.data.entity.getId());
+    }
     GetUserSettings();
 }
 function WebApiVersionCheckFailCallback(error) {
@@ -3529,13 +3545,9 @@ function InitializeSetupRoutines() {
         (typeof window.parent.OnFormSaveFunctionCallback === 'function')) {
         window.parent.OnFormSaveFunctionCallback(ParentFormSaving);
     }
-    _thisGlobals.xrmPage = window.parent.Xrm.Page;
-    _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
-    _thisGlobals.FormIsReadOnly = ((_thisGlobals.ParentFieldsFormType == 3) || (_thisGlobals.ParentFieldsFormType == 4));
+
+    _thisGlobals.UseWebApi = false;
     _thisGlobals.WaitDialog = $('#dcrmegProcessingDialog');
-    if (_thisGlobals.ParentFieldsFormType != 1) {
-        $('#configguid').val(_thisGlobals.xrmPage.data.entity.getId());
-    }
     _thisGlobals.ToolTipClassSelector = DCrmEditableGrid.Helper.GenerateRandomLetters(10);
     _thisGlobals.Translation_Labels.widthAutoCalculate = "0, width is auto calculated";
     _thisGlobals.Translation_Labels.width = "Width";
@@ -3934,7 +3946,7 @@ function InitializeSetupRoutinesInternal() {
         if (($(_thisGlobals.FieldIds.fieldconditioninput).css('display') !== 'none') || ($(_thisGlobals.FieldIds.dateconditioninput).css('display') !== 'none')) {
             if ((_thisGlobals.CurFieldCondition.ConditionValue == undefined) || (_thisGlobals.CurFieldCondition.ConditionValue == 'undefined') ||
                 (_thisGlobals.CurFieldCondition.ConditionValue.length == undefined) || (_thisGlobals.CurFieldCondition.ConditionValue.length == 0)) {
-                window.parent.Xrm.Utility.alertDialog(_thisGlobals.Translation_Labels.ConditionMissingError);
+                DisplayCrmAlertDialog(_thisGlobals.Translation_Labels.ConditionMissingError);
                 return;
             }
         }

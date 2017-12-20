@@ -3,6 +3,8 @@
 // Adjust manually or
 // A call to versionNumber function attempts to set the version to the current version of the CRM.
 var SDKWEBAPI_VERSION_USERD = '8.1';
+var SDKWEBAPI_APIVERSION_USERD = 8;
+var SDKWEBAPI_GLOBALCONTEXT = null;
 
 var SdkWebAPI = (function (SdkWebAPI) {
     SdkWebAPI.create = function (entitySetName, entity, returnId, successCallback, errorCallback, passthroughObj, passthroughObj1, callerId) {
@@ -1337,12 +1339,15 @@ OData-Version: 4.0
                          "currencysymbol",
                          "numberseparator",
                          "decimalsymbol",
-                         "currencydecimalprecision",
+                         //"currencydecimalprecision",
                          "numbergroupformat",
                          "currencyformatcode",
                          "negativeformatcode",
                          "negativecurrencyformatcode"];
 
+        if (SDKWEBAPI_APIVERSION_USERD < 9) {
+            prop.push("currencydecimalprecision");
+        }
         var url = getWebAPIPath() + 'usersettingscollection?$select=' + prop.join() + '&$filter=systemuserid eq ' + UserId;
 
         var req = new XMLHttpRequest();
@@ -2116,13 +2121,21 @@ OData-Version: 4.0
         if (!isFunctionOrNull(errorCallback)) {
             throw new Error("SdkWebAPI.getEntityList errorCallback parameter must be a function or null.");
         }
+
         try {
-            var v = window.parent["APPLICATION_FULL_VERSION"] + '';
+            var v = null;
+            getContext();
+            if ((SDKWEBAPI_GLOBALCONTEXT) && (SDKWEBAPI_GLOBALCONTEXT.getVersion) && (isFunction(SDKWEBAPI_GLOBALCONTEXT.getVersion))) {
+                v = SDKWEBAPI_GLOBALCONTEXT.getVersion();
+            } else {
+                v = window.parent["APPLICATION_FULL_VERSION"] + '';
+            }
             if (!isNullOrUndefined(v)) {
                 if (v.indexOf('.') != -1) {
                     var arr = v.split('.');
                     if (parseInt(arr[0]) >= 8) {
                         SDKWEBAPI_VERSION_USERD = arr[0] + '.' + arr[1];
+                        SDKWEBAPI_APIVERSION_USERD = parseInt(arr[0]);
                         successCallback(v);
                     } else {
                         errorCallback(new Error('CRM Version ' + v + ' does not support WebAPI. Using SOAP library.'));
@@ -2137,6 +2150,7 @@ OData-Version: 4.0
                 try {
                     var arr = VersionResponse.Version.split('.');
                     SDKWEBAPI_VERSION_USERD = arr[0] + '.' + arr[1];
+                    SDKWEBAPI_APIVERSION_USERD = parseInt(arr[0]);
                 } catch (e) {
                     console.error(e.message);
                 }
@@ -2307,28 +2321,42 @@ function WhoAmIFunctionSuccess(WhoAmIResponse) {
         return value;
     }
     function getContext() {
-        var oContext;
+        SDKWEBAPI_GLOBALCONTEXT = null;
         if (typeof window.GetGlobalContext != "undefined") {
-            oContext = window.GetGlobalContext();
+            SDKWEBAPI_GLOBALCONTEXT = window.GetGlobalContext();
         }
         else if (typeof GetGlobalContext != "undefined") {
-            oContext = GetGlobalContext();
+            SDKWEBAPI_GLOBALCONTEXT = GetGlobalContext();
         }
         else {
             if (typeof Xrm != "undefined") {
-                oContext = Xrm.Page.context;
+                if (Xrm.Page != "undefined") {
+                    SDKWEBAPI_GLOBALCONTEXT = Xrm.Page.context;
+                } else if (Xrm.Utility != "undefined") {
+                    SDKWEBAPI_GLOBALCONTEXT = Xrm.Utility.getGlobalContext();
+                }
             }
             else if (typeof window.parent.Xrm != "undefined") {
-                oContext = window.parent.Xrm.Page.context;
+                SDKWEBAPI_GLOBALCONTEXT = window.parent.Xrm.Page.context;
+                if (window.parent.Xrm.Page != "undefined") {
+                    SDKWEBAPI_GLOBALCONTEXT = window.parent.Xrm.Page.context;
+                } else if (window.parent.Xrm.Utility != "undefined") {
+                    SDKWEBAPI_GLOBALCONTEXT = window.parent.Xrm.Utility.getGlobalContext();
+                }
             }
             else {
                 throw new Error("Context is not available.");
             }
         }
-        return oContext;
     }
     function getClientUrl() {
-        return getContext().getClientUrl();
+        if (SDKWEBAPI_GLOBALCONTEXT) {
+            return SDKWEBAPI_GLOBALCONTEXT.getClientUrl();
+        }
+        getContext();
+        if (SDKWEBAPI_GLOBALCONTEXT) {
+            return SDKWEBAPI_GLOBALCONTEXT.getClientUrl();
+        }
     }
     function getWebAPIPath() {
         return getClientUrl() + "/api/data/v" + SDKWEBAPI_VERSION_USERD + "/";

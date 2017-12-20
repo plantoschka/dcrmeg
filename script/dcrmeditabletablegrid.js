@@ -813,12 +813,9 @@ axis.isUndefined(); // true
 var _thisGlobals = DCrmEditableGrid.Globals;
 var _thisHelpers = DCrmEditableGrid.Helper;
 
-_thisGlobals.xrmPage = window.parent.Xrm.Page;
-_thisGlobals.LoggedInUserID = _thisGlobals.xrmPage.context.getUserId();
-_thisGlobals.UserLcid = _thisGlobals.xrmPage.context.getUserLcid();
-_thisGlobals.SystemCurrencyPrecision = 2;
-
 function DisplayCrmAlertDialog(msg) {
+    // TODO
+    // Replace with Navigation methods alert, oprn form, ....
     window.parent.Xrm.Utility.alertDialog(msg);
 }
 
@@ -8648,7 +8645,7 @@ function CreateInlineRecord(self, excelCells, lastRec) {
                 (ed == DCrmEditableGrid.Editors.Currency)) {
                 $cell.addClass('NumericTextbox');
             }
-
+            console.log('Problem here.....');
             if ((ed == DCrmEditableGrid.Editors.Lookup) || (ed == DCrmEditableGrid.Editors.Customer)) {
                 if (self.activeOptions.ParentChildLookupInfo.LookupSchemaName == schema) {
 
@@ -9031,12 +9028,242 @@ function GetSelectedFields(d) {
 }
 
 /* User Settings - Translations */
-_thisGlobals.UseWebApi = false;
+//_thisGlobals.UseWebApi = false;
 function WebApiVersionCheckSuccessCallback(VersionResponse) {
     _thisGlobals.UseWebApi = true;
-    var userid = _thisGlobals.xrmPage.context.getUserId();
-    userid = userid.replace('{', '').replace('}', '');
-    SdkWebAPI.getUserSetttings(userid, WebApiGetUserSettingsSuccessCallback, WebApiGetUserSettingsFailCallback);
+    _thisGlobals.xrmPage = window.parent.Xrm.Page;
+
+    if (SDKWEBAPI_APIVERSION_USERD < 9) {
+        _thisGlobals.LoggedInUserID = _thisGlobals.xrmPage.context.getUserId();
+        _thisGlobals.UserLcid = _thisGlobals.xrmPage.context.getUserLcid();
+    } else {
+        _thisGlobals.LoggedInUserID = SDKWEBAPI_GLOBALCONTEXT.userSettings.userId;
+        _thisGlobals.UserLcid = SDKWEBAPI_GLOBALCONTEXT.userSettings.languageId;
+    }
+
+    _thisGlobals.SystemCurrencyPrecision = 2;
+    if (_thisGlobals.xrmPage.ui) {
+        _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
+        _thisGlobals.FormIsReadOnly = ((_thisGlobals.ParentFieldsFormType == 3) || (_thisGlobals.ParentFieldsFormType == 4));
+    }
+    if ((_thisGlobals.xrmPage.data) && (_thisGlobals.xrmPage.data.entity)) {
+        _thisGlobals.ParentFormEntityName = _thisGlobals.xrmPage.data.entity.getEntityName();
+        _thisGlobals.ParentFormEntityId = _thisGlobals.xrmPage.data.entity.getId(); // Includes {}
+        _thisGlobals.ParentPrimaryAttributeValue = _thisGlobals.xrmPage.data.entity.getPrimaryAttributeValue();
+    }
+
+    $('#fieldfilter_btncancel').on("click", function (e) {
+        e.stopPropagation();
+        var linkentityfilter = $(this).attr('data-linkentity-filterid');
+        if (linkentityfilter) {
+            $('#' + linkentityfilter).remove();
+            $(this).removeAttr('data-linkentity-filterid');
+        }
+        $('#fieldfilter_content').hide();
+        return false;
+    });
+
+    $('#fieldfilter_btnremovefilter').on("click", function (e) {
+        e.stopPropagation();
+        var parentdiv = $('#fieldfilter_content');
+        var parentSchema = parentdiv.attr(_thisGlobals.DataAttr.Header.SchemaName);
+        var configid = parentdiv.attr('data-table-config-id');
+        var tableid = parentdiv.attr('data-table-table-id');
+        var schema = parentdiv.attr('data-field-schemaname');
+
+        parentdiv[0].IndirectClearInlineFilters();
+
+        var tmpDate = new Date();
+        var todayDate = tmpDate.dateFormat(_thisGlobals.userDatetimeSettings.DateFormat);
+        $("#fieldfilter_calendarinput").val(todayDate);
+
+        var filterImgId = parentdiv.attr('data-filterimg-id');
+        $('#' + filterImgId).removeClass('recfilterset').addClass('recfilternotset');
+        parentdiv.hide();
+
+        parentdiv[0].IndirectRefreshGrid(true, true);
+        return false;
+    });
+
+    $('#fieldfilter_btnok').on("click", function (e) {
+        e.stopPropagation();
+
+        var linkentityfilter = $(this).attr('data-linkentity-filterid');
+        if (linkentityfilter) {
+            $('#' + linkentityfilter).remove();
+            $(this).removeAttr('data-linkentity-filterid');
+        }
+
+        var parentdiv = $('#fieldfilter_content');
+        var parentSchema = parentdiv.attr(_thisGlobals.DataAttr.Header.SchemaName);
+        var configid = parentdiv.attr('data-table-config-id');
+        var tableid = parentdiv.attr('data-table-table-id');
+        var schema = parentdiv.attr('data-field-schemaname');
+        var ed = parseInt(parentdiv.attr(_thisGlobals.DataAttr.Header.EditorType));
+        var colIndex = parentdiv.attr('data-col-index');
+        var filterImgId = parentdiv.attr('data-filterimg-id');
+        var fetchOP = parentdiv.attr('data-fetchop');
+        var fetchValue = parentdiv.attr('data-fetchval');
+        var filter = parentdiv.attr('data-selected-filter');
+        var inputVal = $(parentdiv.attr('data-input-id')).val();
+        var uiTypes = parentdiv.attr('data-uitypes');
+
+        var lookupGuid = null;
+        if (ed == DCrmEditableGrid.Editors.Lookup) {
+            inputVal = _thisGlobals.FilterLookupCtr.$input.val();
+            lookupGuid = _thisGlobals.FilterLookupCtr.LookupCtrData.LookupId;
+            uiTypes = _thisGlobals.FilterLookupCtr.LookupCtrData.LookupLogicalName;
+        }
+
+        if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
+            (ed == DCrmEditableGrid.Editors.Checkbox) ||
+            (ed == DCrmEditableGrid.Editors.Status)) {
+            inputVal = _thisGlobals.Select2Option.find('option:selected');
+        }
+
+        if ((ed == DCrmEditableGrid.Editors.DatePicker) || (ed == DCrmEditableGrid.Editors.DateTimePicker)) {
+            if (!$('#fieldfilter_extrainput').hasClass('hidefilters')) {
+                inputVal = $('#fieldfilter_extrainput').val();
+
+                if (!$.isNumeric(inputVal)) {
+                    DisplayCrmAlertDialog("You must provide a number.");
+                    return false;
+                }
+            } else {
+                if ((inputVal == undefined) || (inputVal == 'undefined') || (inputVal.length == 0)) {
+                    var tmpDate = new Date();
+                    inputVal = tmpDate.dateFormat(_thisGlobals.userDatetimeSettings.DateFormat);
+                }
+            }
+        }
+
+        if ((ed == DCrmEditableGrid.Editors.Currency) ||
+            (ed == DCrmEditableGrid.Editors.Numeric) ||
+            (ed == DCrmEditableGrid.Editors.Decimal) ||
+            (ed == DCrmEditableGrid.Editors.Double)) {
+            if (((inputVal != undefined) && (inputVal != 'undefined') && (inputVal.length > 0)) &&
+                (!$.isNumeric(inputVal.replace(_thisGlobals.userCurrencySettings.DecimalSymbol, '.')))) {
+                DisplayCrmAlertDialog("You must provide a number.");
+                return false;
+            }
+        }
+
+        var tmpValue = null;
+
+        var condition = '<condition attribute="' + schema + '" operator="';
+
+        if ((fetchValue != undefined) && (fetchValue != 'undefined')) {
+            if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
+                (ed == DCrmEditableGrid.Editors.Checkbox)) {
+                inputVal = $('#fieldfilter_extrainput').val();
+                condition = '<condition attribute="' + schema + 'name" operator="';
+            }
+            if (ed == DCrmEditableGrid.Editors.Lookup) {
+                condition = '<condition attribute="' + schema + 'name" operator="';
+            }
+            tmpValue = fetchValue.replace('{0}', inputVal);
+        } else {
+            tmpValue = inputVal;
+        }
+
+        if (((fetchValue != undefined) && (fetchValue != 'undefined')) ||
+            ((filter == 'eq') || (filter == 'ne')) ||
+            ((filter.startsWith('next-x') || filter.startsWith('last-x') || filter == 'olderthan-x-months'))) {
+            if ((inputVal == undefined) || (inputVal == 'undefined') || (inputVal.length == 0)) {
+                DisplayCrmAlertDialog("You must provide a value.");
+                return false;
+            }
+        }
+
+        $('#' + filterImgId).removeClass('recfilternotset').addClass('recfilterset');
+
+        /*
+schema [parentaccountid] ed [6] filter [eq] inputVal [AccountName-1011] colIndex [8] 
+filterImgId [0ec44661-b381-4b95-903e-96c194c176d2] fetchOP [eq] fetchValue [undefined] 
+uiTypes [account] lookupGuid [50bd5541-3133-e611-80e5-08002738aa19]
+         */
+
+        if ((filter == 'null') || (filter == 'not-null') || (filter == 'eq') ||
+            ((fetchOP == undefined) || (fetchOP == 'undefined'))) {
+            condition += filter + '"';
+        } else {
+            condition += fetchOP + '"';
+        }
+
+        if ((filter != 'null') && (filter != 'not-null')) {
+
+            if (ed == DCrmEditableGrid.Editors.Lookup) {
+                if (tmpValue.contains(';')) {
+                    var arrNames = tmpValue.split(';');
+                    var arrUitypes = uiTypes.split(';');
+                    var arrGuids = lookupGuid.split(';');
+                    // Multi value
+                    condition = '<condition attribute="' + schema + '" operator="' + ((fetchOP == 'eq') ? 'in' : 'not-in') + '">';
+                    for (var i = 0; i < arrNames.length; i++) {
+                        condition += '<value uiname="' + arrNames[i] + '" uitype="' + arrUitypes[i] + '">'
+                            + _thisHelpers.AddCurlyBrace(arrGuids[i]) + '</value>';
+                    }
+                    condition += '</condition>';
+                } else {
+                    if ((lookupGuid != undefined) && (lookupGuid != 'undefined')) {
+                        condition += ' uitype="' + uiTypes + '" value="' + _thisHelpers.AddCurlyBrace(lookupGuid) + '"';
+                    } else {
+                        condition += ' uitype="' + uiTypes + '" value="' + tmpValue + '"';
+                    }
+                }
+            } else if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
+                (ed == DCrmEditableGrid.Editors.Checkbox) ||
+                (ed == DCrmEditableGrid.Editors.Status)) {
+                // (Object.prototype.toString.call(tmpValue) == '[object String]')
+                if (Object.prototype.toString.call(tmpValue) == '[object Object]') {
+                    if (tmpValue.length > 1) {
+                        inputVal = '';
+                        condition = '<condition attribute="' + schema + '" operator="' + ((fetchOP == 'eq') ? 'in' : 'not-in') + '">';
+                        for (var i = 0; i < tmpValue.length; i++) {
+                            var op = $(tmpValue[i]).attr('id');
+                            inputVal += ((i > 0) ? ';' : '') + op;
+                            condition += '<value>' + op + '</value>';
+                        }
+                        condition += '</condition>';
+                    } else {
+                        inputVal = $(tmpValue[0]).attr('id');
+                        condition += ' value="' + inputVal + '"';
+                    }
+                } else {
+                    condition += ' value="' + tmpValue + '"';
+                }
+            } else if ((ed == DCrmEditableGrid.Editors.DatePicker) || (ed == DCrmEditableGrid.Editors.DateTimePicker)) {
+                condition += ' value="' + FixDatesForFetch(tmpValue) + '"';
+
+            } else if ((ed == DCrmEditableGrid.Editors.Currency) ||
+                        (ed == DCrmEditableGrid.Editors.Numeric) ||
+                        (ed == DCrmEditableGrid.Editors.Decimal) ||
+                        (ed == DCrmEditableGrid.Editors.Double)) {
+                inputVal = tmpValue.replace(_thisGlobals.userCurrencySettings.DecimalSymbol, '.');
+                condition += ' value="' + inputVal + '"';
+
+            } else if ((tmpValue) && (tmpValue.length > 0)) {
+                condition += ' value="' + tmpValue + '"';
+            }
+        } else if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
+            (ed == DCrmEditableGrid.Editors.Checkbox) || (ed == DCrmEditableGrid.Editors.Status)) {
+            inputVal = null;
+        }
+
+        condition += ' />';
+
+        parentdiv[0].IndirectSetFetchXmlFiltered(schema, condition, filter, inputVal,
+            ((fetchOP) ? fetchOP : null), ((fetchValue) ? fetchValue : null), lookupGuid, uiTypes);
+
+        parentdiv.hide();
+
+        parentdiv[0].IndirectRefreshGrid(true, true);
+        return false;
+    });
+
+    _thisGlobals.FilterLookupCtr = new $.fn.DCrmEditableGrid.FilterLookup();
+
+    SdkWebAPI.getUserSetttings(_thisGlobals.LoggedInUserID.replace('{', '').replace('}', ''), WebApiGetUserSettingsSuccessCallback, WebApiGetUserSettingsFailCallback);
 }
 function WebApiVersionCheckFailCallback(error) {
     LogEx(error.message);
@@ -9063,6 +9290,11 @@ function WebApiGetUserSettingsSuccessCallback(settings) {
     };
 
     _thisGlobals.userDatetimeSettings.DateTimeFormat = _thisGlobals.userDatetimeSettings.DateFormat + " " + _thisGlobals.userDatetimeSettings.TimeFormat;
+
+    if ((axis.isUndefined(result.currencydecimalprecision)) ||
+        (axis.isNull(result.currencydecimalprecision))) {
+        result.currencydecimalprecision = _thisGlobals.SystemCurrencyPrecision;
+    }
 
     // Need to be set first in options. +1
     _thisGlobals.userCurrencySettings = {
@@ -9824,226 +10056,8 @@ function InitializeSetupRoutines() {
     _thisGlobals.FrameWidth = $(window).width();
     _thisGlobals.FrameHeight = $(window).height();
 
-    if (_thisGlobals.xrmPage.ui) {
-        _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
-        _thisGlobals.FormIsReadOnly = ((_thisGlobals.ParentFieldsFormType == 3) || (_thisGlobals.ParentFieldsFormType == 4));
-    }
-    if ((_thisGlobals.xrmPage.data) && (_thisGlobals.xrmPage.data.entity)) {
-        _thisGlobals.ParentFormEntityName = _thisGlobals.xrmPage.data.entity.getEntityName();
-        _thisGlobals.ParentFormEntityId = _thisGlobals.xrmPage.data.entity.getId(); // Includes {}
-        _thisGlobals.ParentPrimaryAttributeValue = _thisGlobals.xrmPage.data.entity.getPrimaryAttributeValue();
-    }
+    _thisGlobals.UseWebApi = false;
 
-    $('#fieldfilter_btncancel').on("click", function (e) {
-        e.stopPropagation();
-        var linkentityfilter = $(this).attr('data-linkentity-filterid');
-        if (linkentityfilter) {
-            $('#' + linkentityfilter).remove();
-            $(this).removeAttr('data-linkentity-filterid');
-        }
-        $('#fieldfilter_content').hide();
-        return false;
-    });
-
-    $('#fieldfilter_btnremovefilter').on("click", function (e) {
-        e.stopPropagation();
-        var parentdiv = $('#fieldfilter_content');
-        var parentSchema = parentdiv.attr(_thisGlobals.DataAttr.Header.SchemaName);
-        var configid = parentdiv.attr('data-table-config-id');
-        var tableid = parentdiv.attr('data-table-table-id');
-        var schema = parentdiv.attr('data-field-schemaname');
-
-        parentdiv[0].IndirectClearInlineFilters();
-
-        var tmpDate = new Date();
-        var todayDate = tmpDate.dateFormat(_thisGlobals.userDatetimeSettings.DateFormat);
-        $("#fieldfilter_calendarinput").val(todayDate);
-
-        var filterImgId = parentdiv.attr('data-filterimg-id');
-        $('#' + filterImgId).removeClass('recfilterset').addClass('recfilternotset');
-        parentdiv.hide();
-
-        parentdiv[0].IndirectRefreshGrid(true, true);
-        return false;
-    });
-
-    $('#fieldfilter_btnok').on("click", function (e) {
-        e.stopPropagation();
-
-        var linkentityfilter = $(this).attr('data-linkentity-filterid');
-        if (linkentityfilter) {
-            $('#' + linkentityfilter).remove();
-            $(this).removeAttr('data-linkentity-filterid');
-        }
-
-        var parentdiv = $('#fieldfilter_content');
-        var parentSchema = parentdiv.attr(_thisGlobals.DataAttr.Header.SchemaName);
-        var configid = parentdiv.attr('data-table-config-id');
-        var tableid = parentdiv.attr('data-table-table-id');
-        var schema = parentdiv.attr('data-field-schemaname');
-        var ed = parseInt(parentdiv.attr(_thisGlobals.DataAttr.Header.EditorType));
-        var colIndex = parentdiv.attr('data-col-index');
-        var filterImgId = parentdiv.attr('data-filterimg-id');
-        var fetchOP = parentdiv.attr('data-fetchop');
-        var fetchValue = parentdiv.attr('data-fetchval');
-        var filter = parentdiv.attr('data-selected-filter');
-        var inputVal = $(parentdiv.attr('data-input-id')).val();
-        var uiTypes = parentdiv.attr('data-uitypes');
-
-        var lookupGuid = null;
-        if (ed == DCrmEditableGrid.Editors.Lookup) {
-            inputVal = _thisGlobals.FilterLookupCtr.$input.val();
-            lookupGuid = _thisGlobals.FilterLookupCtr.LookupCtrData.LookupId;
-            uiTypes = _thisGlobals.FilterLookupCtr.LookupCtrData.LookupLogicalName;
-        }
-
-        if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
-            (ed == DCrmEditableGrid.Editors.Checkbox) ||
-            (ed == DCrmEditableGrid.Editors.Status)) {
-            inputVal = _thisGlobals.Select2Option.find('option:selected');
-        }
-
-        if ((ed == DCrmEditableGrid.Editors.DatePicker) || (ed == DCrmEditableGrid.Editors.DateTimePicker)) {
-            if (!$('#fieldfilter_extrainput').hasClass('hidefilters')) {
-                inputVal = $('#fieldfilter_extrainput').val();
-
-                if (!$.isNumeric(inputVal)) {
-                    DisplayCrmAlertDialog("You must provide a number.");
-                    return false;
-                }
-            } else {
-                if ((inputVal == undefined) || (inputVal == 'undefined') || (inputVal.length == 0)) {
-                    var tmpDate = new Date();
-                    inputVal = tmpDate.dateFormat(_thisGlobals.userDatetimeSettings.DateFormat);
-                }
-            }
-        }
-
-        if ((ed == DCrmEditableGrid.Editors.Currency) ||
-            (ed == DCrmEditableGrid.Editors.Numeric) ||
-            (ed == DCrmEditableGrid.Editors.Decimal) ||
-            (ed == DCrmEditableGrid.Editors.Double)) {
-            if (((inputVal != undefined) && (inputVal != 'undefined') && (inputVal.length > 0)) &&
-                (!$.isNumeric(inputVal.replace(_thisGlobals.userCurrencySettings.DecimalSymbol, '.')))) {
-                DisplayCrmAlertDialog("You must provide a number.");
-                return false;
-            }
-        }
-
-        var tmpValue = null;
-
-        var condition = '<condition attribute="' + schema + '" operator="';
-
-        if ((fetchValue != undefined) && (fetchValue != 'undefined')) {
-            if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
-                (ed == DCrmEditableGrid.Editors.Checkbox)) {
-                inputVal = $('#fieldfilter_extrainput').val();
-                condition = '<condition attribute="' + schema + 'name" operator="';
-            }
-            if (ed == DCrmEditableGrid.Editors.Lookup) {
-                condition = '<condition attribute="' + schema + 'name" operator="';
-            }
-            tmpValue = fetchValue.replace('{0}', inputVal);
-        } else {
-            tmpValue = inputVal;
-        }
-
-        if (((fetchValue != undefined) && (fetchValue != 'undefined')) ||
-            ((filter == 'eq') || (filter == 'ne')) ||
-            ((filter.startsWith('next-x') || filter.startsWith('last-x') || filter == 'olderthan-x-months'))) {
-            if ((inputVal == undefined) || (inputVal == 'undefined') || (inputVal.length == 0)) {
-                DisplayCrmAlertDialog("You must provide a value.");
-                return false;
-            }
-        }
-
-        $('#' + filterImgId).removeClass('recfilternotset').addClass('recfilterset');
-
-        /*
-schema [parentaccountid] ed [6] filter [eq] inputVal [AccountName-1011] colIndex [8] 
-filterImgId [0ec44661-b381-4b95-903e-96c194c176d2] fetchOP [eq] fetchValue [undefined] 
-uiTypes [account] lookupGuid [50bd5541-3133-e611-80e5-08002738aa19]
-         */
-
-        if ((filter == 'null') || (filter == 'not-null') || (filter == 'eq') ||
-            ((fetchOP == undefined) || (fetchOP == 'undefined'))) {
-            condition += filter + '"';
-        } else {
-            condition += fetchOP + '"';
-        }
-
-        if ((filter != 'null') && (filter != 'not-null')) {
-
-            if (ed == DCrmEditableGrid.Editors.Lookup) {
-                if (tmpValue.contains(';')) {
-                    var arrNames = tmpValue.split(';');
-                    var arrUitypes = uiTypes.split(';');
-                    var arrGuids = lookupGuid.split(';');
-                    // Multi value
-                    condition = '<condition attribute="' + schema + '" operator="' + ((fetchOP == 'eq') ? 'in' : 'not-in') + '">';
-                    for (var i = 0; i < arrNames.length; i++) {
-                        condition += '<value uiname="' + arrNames[i] + '" uitype="' + arrUitypes[i] + '">'
-                            + _thisHelpers.AddCurlyBrace(arrGuids[i]) + '</value>';
-                    }
-                    condition += '</condition>';
-                } else {
-                    if ((lookupGuid != undefined) && (lookupGuid != 'undefined')) {
-                        condition += ' uitype="' + uiTypes + '" value="' + _thisHelpers.AddCurlyBrace(lookupGuid) + '"';
-                    } else {
-                        condition += ' uitype="' + uiTypes + '" value="' + tmpValue + '"';
-                    }
-                }
-            } else if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
-                (ed == DCrmEditableGrid.Editors.Checkbox) ||
-                (ed == DCrmEditableGrid.Editors.Status)) {
-                // (Object.prototype.toString.call(tmpValue) == '[object String]')
-                if (Object.prototype.toString.call(tmpValue) == '[object Object]') {
-                    if (tmpValue.length > 1) {
-                        inputVal = '';
-                        condition = '<condition attribute="' + schema + '" operator="' + ((fetchOP == 'eq') ? 'in' : 'not-in') + '">';
-                        for (var i = 0; i < tmpValue.length; i++) {
-                            var op = $(tmpValue[i]).attr('id');
-                            inputVal += ((i > 0) ? ';' : '') + op;
-                            condition += '<value>' + op + '</value>';
-                        }
-                        condition += '</condition>';
-                    } else {
-                        inputVal = $(tmpValue[0]).attr('id');
-                        condition += ' value="' + inputVal + '"';
-                    }
-                } else {
-                    condition += ' value="' + tmpValue + '"';
-                }
-            } else if ((ed == DCrmEditableGrid.Editors.DatePicker) || (ed == DCrmEditableGrid.Editors.DateTimePicker)) {
-                condition += ' value="' + FixDatesForFetch(tmpValue) + '"';
-
-            } else if ((ed == DCrmEditableGrid.Editors.Currency) ||
-                        (ed == DCrmEditableGrid.Editors.Numeric) ||
-                        (ed == DCrmEditableGrid.Editors.Decimal) ||
-                        (ed == DCrmEditableGrid.Editors.Double)) {
-                inputVal = tmpValue.replace(_thisGlobals.userCurrencySettings.DecimalSymbol, '.');
-                condition += ' value="' + inputVal + '"';
-
-            } else if ((tmpValue) && (tmpValue.length > 0)) {
-                condition += ' value="' + tmpValue + '"';
-            }
-        } else if ((ed == DCrmEditableGrid.Editors.OptionSet) ||
-            (ed == DCrmEditableGrid.Editors.Checkbox) || (ed == DCrmEditableGrid.Editors.Status)) {
-            inputVal = null;
-        }
-
-        condition += ' />';
-
-        parentdiv[0].IndirectSetFetchXmlFiltered(schema, condition, filter, inputVal,
-            ((fetchOP) ? fetchOP : null), ((fetchValue) ? fetchValue : null), lookupGuid, uiTypes);
-
-        parentdiv.hide();
-
-        parentdiv[0].IndirectRefreshGrid(true, true);
-        return false;
-    });
-
-    _thisGlobals.FilterLookupCtr = new $.fn.DCrmEditableGrid.FilterLookup();
     _thisHelpers.WaitDialog(true);
     SdkWebAPI.versionNumber(WebApiVersionCheckSuccessCallback, WebApiVersionCheckFailCallback);
 }
@@ -13719,14 +13733,14 @@ var GridLoaderHelper = (function () {
             */
             if (self.data.Entity.RelatedToDisplayOnEntity) {
                 if (self.parentChildLookupInfo.LookupSchemaName.endsWith('customerid') || self.parentChildLookupInfo.LookupSchemaName.endsWith('ownerid')) {
-                    self.parentChildLookupInfo.OriginalSchemaname = self.parentChildLookupInfo.LookupSchemaName + '_' + self.data.Entity.ParentSchemaName;
+                    self.parentChildLookupInfo.OriginalSchemaname = self.parentChildLookupInfo.LookupSchemaName + '_' + self.parentChildLookupInfo.ParentSchemaName; //self.data.Entity.ParentSchemaName;
                 } else {
                     SdkWebAPI.GetAttributeSchemaName(self.data.Entity.SchemaName, self.parentChildLookupInfo.LookupSchemaName,
                         self.WebApiEntityMetadataCallback, self.CallbackErrorHandler);
                 }
             } else if (self.data.Entity.RelatedToParentLI) {
                 if (self.parentChildLookupInfo.LookupSchemaName.endsWith('customerid') || self.parentChildLookupInfo.LookupSchemaName.endsWith('ownerid')) {
-                    self.parentChildLookupInfo.OriginalSchemaname = self.data.Entity.RelatedToParentLILookupSchemaName + '_' + self.data.Entity.ParentSchemaName;
+                    self.parentChildLookupInfo.OriginalSchemaname = self.data.Entity.RelatedToParentLILookupSchemaName + '_' + self.parentChildLookupInfo.ParentSchemaName; //self.data.Entity.ParentSchemaName;
                 } else {
                     SdkWebAPI.GetAttributeSchemaName(self.data.Entity.SchemaName, self.data.Entity.RelatedToParentLILookupSchemaName,
                         self.WebApiEntityMetadataCallback, self.CallbackErrorHandler);
