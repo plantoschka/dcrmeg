@@ -1,3 +1,13 @@
+v1.0.7.1
+=========
+Fixed a bug with window.parent.Xrm.Navigation.openAlertDialog.
+Fixed a bug when attempting to display a hierarchy (6 levels) in the grid using one entity.
+
+Added an option to set a row color based on a field condition.
+Added drag handle (drag&drop was too sensitive causing issues) to the list of entity to selected fields from. Re arranged the UI to increase the height of the list of entities to show data from.
+Added the ability to change the name of the configuration.
+
+
 v1.0.6.8
 =========
 

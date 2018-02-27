@@ -68,30 +68,7 @@
                     <ol id="makesortable" class="ollistofentities"></ol>
                 </div>
                 <div id="maincontentsect51" class="displaynone" style="border-left: solid 3px lightgray;padding-left:10px;">
-                    <div class="group">
-                        <div class="col span_2_of_3">
-                            <label id="displayclearfilterbuttonlabel" class="ElipseText" for="displayclearfilterbutton">Display clear filters button</label>
-                        </div>
-                        <div class="col span_1_of_4">
-                            <input type="checkbox" checked="checked" id="displayclearfilterbutton" />
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="col span_2_of_3">
-                            <label id="displayheaderfilterlabel" class="ElipseText" for="displayheaderfilter">Display grid header filter</label>
-                        </div>
-                        <div class="col span_1_of_4">
-                            <input type="checkbox" checked="checked" id="displayheaderfilter" />
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="col span_2_of_3">
-                            <label id="displayexportbuttonlabel" class="ElipseText" for="displayexportbutton">Display export button</label>
-                        </div>
-                        <div class="col span_1_of_4">
-                            <input type="checkbox" checked="checked" id="displayexportbutton" />
-                        </div>
-                    </div>
+
                     <div class="group">
                         <div class="col span_2_of_3">
                             <label id="displaysetrecordstatelabel" class="ElipseText" for="displaysetrecordstate">Display set record status context menu</label>
@@ -344,6 +321,31 @@
                         <input style="width:45px;" type="text" id="subgridtbodyheight" maxlength="3" />
                     </div>
                 </div>
+                <div class="group">
+                    <div class="col span_2_of_3">
+                        <label id="displayclearfilterbuttonlabel" class="ElipseText" for="displayclearfilterbutton">Display clear filters button</label>
+                    </div>
+                    <div class="col span_1_of_4">
+                        <input type="checkbox" checked="checked" id="displayclearfilterbutton" />
+                    </div>
+                </div>
+                <div class="group">
+                    <div class="col span_2_of_3">
+                        <label id="displayheaderfilterlabel" class="ElipseText" for="displayheaderfilter">Display grid header filter</label>
+                    </div>
+                    <div class="col span_1_of_4">
+                        <input type="checkbox" checked="checked" id="displayheaderfilter" />
+                    </div>
+                </div>
+                <div class="group">
+                    <div class="col span_2_of_3">
+                        <label id="displayexportbuttonlabel" class="ElipseText" for="displayexportbutton">Display export button</label>
+                    </div>
+                    <div class="col span_1_of_4">
+                        <input type="checkbox" checked="checked" id="displayexportbutton" />
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="section group displaynone section4class" id="maincontentsect4">
@@ -407,16 +409,17 @@
                                 <td><input id="conditionforegroundcolor" type="text" /></td>
                                 <td title="CSS sample: font-size:14px;font-weight:bold">CSS</td>
                                 <td><input id="cellfontcss" title="CSS Sample: font-size:14px;font-weight:bold" class="conditioncss" type="text" /></td>
+                                <td><label for="applycellformattingtorow">Apply Color to Row</label><input id="applycellformattingtorow" type="checkbox" /></td>
                                 <td><button id="cellformattingokbtn">OK</button></td>
                                 <td><button id="cellformattingcancelbtn">Cancel</button></td>
                                 <td><button id="cellformattingresetbtn">Reset</button></td>
                             </tr>
                             <tr>
-                                <td colspan="7">&nbsp;</td>
+                                <td colspan="8">&nbsp;</td>
                             </tr>
                             <tr>
                                 <td style="font-weight:bold;">Condition</td>
-                                <td colspan="9">
+                                <td colspan="10">
                                     <select id="cellformatgeneralcondition">
                                         <option value="donotselect">---</option>
                                         <option value="eq" data-fetchop="eq">Equals</option>

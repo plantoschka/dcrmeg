@@ -114,7 +114,7 @@ padding: 2px 0 2px 5px;
 }
 
 .flyout-ContentContainer {
-    height: 220px;
+    height: 360px;
     overflow:auto;
     margin: 5px 10px 5px 0;
     border: solid 1px lightgray;
@@ -653,7 +653,7 @@ Processing dialog
 }
 
 .entitygridinfocontainer {
-	    cursor: move;
+	    /*cursor: move;*/
 	    margin: 4px 4px 4px 4px;
 	    padding: 2px 4px 0 4px;
 	    font-size: 12px;
@@ -672,7 +672,7 @@ Processing dialog
 }
 .ollistofentitiescontainer {
     /*width:500px;*/
-    height:120px;
+    height:260px;
     overflow:auto;
 
     border-left: solid 3px lightgray;

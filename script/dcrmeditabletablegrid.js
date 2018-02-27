@@ -817,7 +817,7 @@ function DisplayCrmAlertDialog(msg) {
     if (SDKWEBAPI_APIVERSION_USERD < 9) {
         window.parent.Xrm.Utility.alertDialog(msg);
     } else {
-        window.parent.Xrm.Navigation.openAlertDialog(msg);
+        window.parent.Xrm.Navigation.openAlertDialog({ text: msg });
     }
 }
 
@@ -6610,6 +6610,16 @@ list of translated languages
                                     if (cellformatOptions.FontCss) {
                                         DeccoupleCss(cellformatOptions.FontCss, $thistr);
                                     }
+                                    if ((cellformatOptions.BackgroundColor) && (cellformatOptions.ApplyToRow)) {
+                                        $tr.css("background-color", cellformatOptions.BackgroundColor);
+                                    }
+                                } else {
+                                    $thistr.css("background-color", "");
+                                    $thistr.css("color", "");
+                                    if (cellformatOptions.FontCss) {
+                                        DeccoupleCss(cellformatOptions.FontCss, $thistr, true);
+                                    }
+                                    $tr.css("background-color", "");
                                 }
                             } else {
                                 if ((cellformatOptions.BackgroundColor) && (!_thisHelpers.IsDefaultBackgroundColor(cellformatOptions.BackgroundColor))) {
@@ -7281,6 +7291,16 @@ list of translated languages
                                 if (cellformatOptions.FontCss) {
                                     DeccoupleCss(cellformatOptions.FontCss, toSave[i].TargetCell);
                                 }
+                                if ((cellformatOptions.BackgroundColor) && (cellformatOptions.ApplyToRow)) {
+                                    toSave[i].TargetCell.parent().css("background-color", cellformatOptions.BackgroundColor);
+                                }
+                            } else {
+                                toSave[i].TargetCell.css("background-color", "");
+                                toSave[i].TargetCell.css("color", "");
+                                if (cellformatOptions.FontCss) {
+                                    DeccoupleCss(cellformatOptions.FontCss, toSave[i].TargetCell, true);
+                                }
+                                toSave[i].TargetCell.parent().css("background-color", "");
                             }
                         } else {
                             if ((cellformatOptions.BackgroundColor) && (!_thisHelpers.IsDefaultBackgroundColor(cellformatOptions.BackgroundColor))) {
@@ -9074,7 +9094,6 @@ function GetSelectedFields(d) {
 }
 
 /* User Settings - Translations */
-//_thisGlobals.UseWebApi = false;
 function WebApiVersionCheckSuccessCallback(VersionResponse) {
     _thisGlobals.UseWebApi = true;
     _thisGlobals.xrmPage = window.parent.Xrm.Page;
@@ -9404,7 +9423,21 @@ function WebApiGetUserSettingsFailCallback(error) {
 }
 
 function GetAllUserSettings() {
-    var userId = _thisGlobals.xrmPage.context.getUserId();
+    _thisGlobals.xrmPage = window.parent.Xrm.Page;
+
+    _thisGlobals.LoggedInUserID = _thisGlobals.xrmPage.context.getUserId();
+    _thisGlobals.UserLcid = _thisGlobals.xrmPage.context.getUserLcid();
+
+    _thisGlobals.SystemCurrencyPrecision = 2;
+    if (_thisGlobals.xrmPage.ui) {
+        _thisGlobals.ParentFieldsFormType = _thisGlobals.xrmPage.ui.getFormType();
+        _thisGlobals.FormIsReadOnly = ((_thisGlobals.ParentFieldsFormType == 3) || (_thisGlobals.ParentFieldsFormType == 4));
+    }
+    if ((_thisGlobals.xrmPage.data) && (_thisGlobals.xrmPage.data.entity)) {
+        _thisGlobals.ParentFormEntityName = _thisGlobals.xrmPage.data.entity.getEntityName();
+        _thisGlobals.ParentFormEntityId = _thisGlobals.xrmPage.data.entity.getId(); // Includes {}
+        _thisGlobals.ParentPrimaryAttributeValue = _thisGlobals.xrmPage.data.entity.getPrimaryAttributeValue();
+    }
     var settings = ["dateformatstring",
                      "dateseparator",
                      "timeformatstring",
@@ -9430,7 +9463,7 @@ function GetAllUserSettings() {
             '<entity name="usersettings">',
                 attributes,
                 '<filter type="and">',
-                    '<condition attribute="systemuserid" operator="eq" value="', userId, '" />',
+                    '<condition attribute="systemuserid" operator="eq" value="', _thisGlobals.LoggedInUserID, '" />',
                 '</filter>',
             '</entity>',
         '</fetch>'].join('');
@@ -12137,7 +12170,35 @@ Related [false] RelatedEntityLookup [undefined]
         data.ParentSchemaName = (tmp[6].length > 0) ? tmp[6] : undefined;
         // Find the parent config and set the parentLiId
         if (data.ParentSchemaName) {
-            parentconfig = FindDCrmEGConfigurationBySchema(data.ParentSchemaName);
+            if (_thisGlobals.DCrmEGConfiguration[i - 1]) {
+                parentconfig = _thisGlobals.DCrmEGConfiguration[i - 1];
+            } else {
+                // Level 0
+                parentconfig = _thisGlobals.DCrmEGConfiguration[_thisGlobals.DCrmEGConfiguration.length - 1];
+                // Level 1
+                parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+
+                if (parentconfig.ChildConfigurations.length > 0) {
+                    // Level 2
+                    parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+                    if (parentconfig.ChildConfigurations.length > 0) {
+                        // Level 3
+                        parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+                        if (parentconfig.ChildConfigurations.length > 0) {
+                            // Level 4
+                            parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+                            if (parentconfig.ChildConfigurations.length > 0) {
+                                // Level 5
+                                parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+                                if (parentconfig.ChildConfigurations.length > 0) {
+                                    // Level 6
+                                    parentconfig = parentconfig.ChildConfigurations[parentconfig.ChildConfigurations.length - 1];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (tmp[7].length > 0) {
@@ -12178,6 +12239,8 @@ Related [false] RelatedEntityLookup [undefined]
         }
 
         config = new DCrmEGConfigurationManager(data);
+        //console.log('Selected feields.......', fields);
+
         if (fields.length > 0) {
             config.SelectedFields = GetSelectedFields(FindEntiyGridFields(data.schemaName, fields));
         }
@@ -12254,7 +12317,8 @@ Related [false] RelatedEntityLookup [undefined]
 // data: instance of DCrmEGConfigurationManager
 function CreateAndPopulateGrid(data, parentcontainer, relationshipparentEntityGuid, relationShipLookupLabel) { 
 
-   if (data.SelectedFields.length == 0) {
+    if (data.SelectedFields.length == 0) {
+        _thisHelpers.WaitDialog();
         return null;
     }
 
@@ -13476,6 +13540,16 @@ var GridLoaderHelper = (function () {
                                         if (cellformatOptions.FontCss) {
                                             DeccoupleCss(cellformatOptions.FontCss, $td);
                                         }
+                                        if ((cellformatOptions.BackgroundColor) && (cellformatOptions.ApplyToRow)) {
+                                            $tr.css("background-color", cellformatOptions.BackgroundColor);
+                                        }
+                                    } else {
+                                        $td.css("background-color", "");
+                                        $td.css("color", "");
+                                        if (cellformatOptions.FontCss) {
+                                            DeccoupleCss(cellformatOptions.FontCss, $td, true);
+                                        }
+                                        $tr.css("background-color", "");
                                     }
                                 } else {
                                     if ((cellformatOptions.BackgroundColor) && (!_thisHelpers.IsDefaultBackgroundColor(cellformatOptions.BackgroundColor))) {
