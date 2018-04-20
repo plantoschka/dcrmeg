@@ -14249,6 +14249,120 @@ function GetGridDataInternal(theGrid, targetByRowGuid) {
     return gridData;
 }
 
+function GetSelecterGridDataInternal(theGrid, targetByRowGuid) {
+    var gridData = { Headers: [], Rows: [], GridEditorTypes: DCrmEditableGrid.Editors };
+    if (theGrid) {
+        var rows = theGrid.activeOptions.selectedRows;
+        // the first editor is always set to null.
+        var internalEditors = theGrid.GridEditors;
+        var allheaders = theGrid.GetHeaderCells();
+
+        for (var i = 1; i < internalEditors.length; i++) {
+            var ed = 0;
+            var dheader = $(allheaders[i]);
+
+            if (internalEditors[i] != null) {
+                ed = internalEditors[i].EditorType;
+            } else {
+                ed = parseInt(dheader.attr(_thisGlobals.DataAttr.Header.ReadOnlyEditorType));
+            }
+            var header = {
+                EditorType: ed,
+                FieldLogicalName: dheader.attr('data-header-schemaname'),
+                Label: dheader.attr('title')
+            };
+            gridData.Headers.push(header);
+        }
+        for (var i = 0; i < rows.length; i++) {
+            var $row = $(rows[i]);
+            var recGuid = $row.attr(_thisGlobals.DataAttr.Cell.RecordGuid);
+            if ((targetByRowGuid) && (targetByRowGuid != recGuid)) {
+                continue;
+            }
+
+            var rowtoadd = {
+                RecordGuid: recGuid,
+                RowIndex: parseInt($row.attr(_thisGlobals.DataAttr.Row.InternalIndex)),
+                Cells: []
+            };
+            var tds = $row.find('td');
+            for (var ii = 1; ii < tds.length; ii++) {
+                var targetCell = $(tds[ii]);
+
+                var cell = { FormattedValue: null, Value: null };
+
+                var editorType = gridData.Headers[ii - 1].EditorType;
+                cell.FormattedValue = _thisHelpers.GetActiveCellText(targetCell);
+                switch (editorType) {
+                    case DCrmEditableGrid.Editors.Text:
+                    case DCrmEditableGrid.Editors.Description:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = cell.FormattedValue;
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.Numeric:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = parseInt(_thisHelpers.RemoveNumericFormat(cell.FormattedValue));
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.Double:
+                    case DCrmEditableGrid.Editors.Decimal:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = parseFloat(_thisHelpers.RemoveNumericFormat(cell.FormattedValue));
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.Currency:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = parseFloat(_thisHelpers.RemoveNumericFormat(cell.FormattedValue));
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.Checkbox:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = ($(allheaders[ii]).attr('data-header-checktext') == cell.FormattedValue) ? true : false;
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.OptionSet:
+                    case DCrmEditableGrid.Editors.Status:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = parseInt(targetCell.attr(_thisGlobals.DataAttr.Cell.Optionset.SelectedValue));
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.DatePicker:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = Date.parseDate(cell.FormattedValue);
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.DateTimePicker:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = Date.parseDate(cell.FormattedValue, _thisGlobals.userDatetimeSettings.DateTimeFormat);
+                        }
+                        break;
+                    case DCrmEditableGrid.Editors.Lookup:
+                    case DCrmEditableGrid.Editors.Customer:
+                    case DCrmEditableGrid.Editors.Owner:
+                        if (!IsNullOrUndefinedOrNoLength(cell.FormattedValue)) {
+                            cell.Value = {
+                                EntityLogicalName: targetCell.attr(_thisGlobals.DataAttr.Cell.Lookup.LogicalName),
+                                Guid: targetCell.attr(_thisGlobals.DataAttr.Cell.Lookup.Guid)
+                            };
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                if (cell.Value == null) {
+                    cell.FormattedValue = null;
+                }
+
+                rowtoadd.Cells.push(cell);
+            }
+            gridData.Rows.push(rowtoadd);
+        }
+    }
+    return gridData;
+}
+
 function GetGridRowData(gridIdentifier, tableid, targetByRowGuid) {
     var theGrid = null;
     if (IsNullOrUndefinedOrNoLength(gridIdentifier)) {
@@ -14295,6 +14409,24 @@ var DCrmEgGrid = (function (DCrmEgGrid) {
         }
         return null;
     }
+
+    DCrmEgGrid.SelectedGridData = function (gridIdentifier, schemaname) {
+        var theGrid = null;
+        if (IsNullOrUndefinedOrNoLength(gridIdentifier)) {
+            // use the first config
+            theGrid = _thisGlobals.DCrmEGConfiguration[0].FindGridBySchemaname(schemaname);
+        } else {
+            var config = FindDCrmEGConfigurationByGridIdentifier(gridIdentifier);
+            if (config) {
+                theGrid = config.FindGridBySchemaname(schemaname);
+            }
+        }
+        if (theGrid) {
+            return GetSelecterGridDataInternal(theGrid);
+        }
+        return null;
+    }
+
     DCrmEgGrid.RefreshGrid = function (gridIdentifier, schemaname) {
         var theGrid = null;
         if (IsNullOrUndefinedOrNoLength(gridIdentifier)) {
